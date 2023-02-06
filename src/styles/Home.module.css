@@ -150,6 +150,9 @@
   );
   background-clip: content-box;
 }
+.image-movie-item:hover .image-movie-item>img{
+  transform: scale(1.1);
+}
 
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {

@@ -72,7 +72,9 @@
     --card-border-rgb: 200, 200, 200;
   }
 }
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 * {
   box-sizing: border-box;
   padding: 0;

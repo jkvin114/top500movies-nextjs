@@ -1,14 +1,15 @@
-import { IImageMovieItem, IMovie } from "@/util/types"
+import {  IMovie } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import { num2USD } from "@/util/util"
 
 type Props={
     movie:IMovie|undefined
+    active:boolean
 }
-export default function GridMovieItem({movie}:Props) {
+export default function GridMovieItem({movie,active}:Props) {
     return (<>
-        {movie?(<div className="item"><Link href={`/detail/`+movie.id}>
+        {movie?(<div className={`item ${active?"active":"inactive"}`}><Link href={`/detail/`+movie.id}>
             <div>
                 <div className="title">{movie.title}</div>
                 <div className="content">
@@ -41,6 +42,10 @@ export default function GridMovieItem({movie}:Props) {
             .content{
                 display:grid;
                 grid-template-columns:100px 200px;
+            } .item.inactive{
+                filter:brightness(0.7);
+            }
+            .item.active{
             }
 			`}</style>
     </>)

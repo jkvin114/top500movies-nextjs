@@ -1,3 +1,4 @@
+import { type } from "os"
 
 type IMovie = {
     id: string,
@@ -29,41 +30,19 @@ type IRank = {
     internationalGross:number,
     hasRecentData:boolean
 }
-type IImageMovieItem={
-    id:string,
-    image:string,
-    title:string
-}
-type IListMovieItem={
-    id:string,
-    title:string,
-    year:string,
-    releaseDate:string,
-    runtimeMins:number,
-    director:string,
-    budget:string,
-    imDbRating:string,
-    metacriticRating:number,
-    worldwideGross:number,
-    domesticGross:number,
-    domesticOpening:number,
-    contentRating:string,
-}
-type IBarGraphMovieItem={
-    id:string,
-    title:string,
-    runtimeMins:number,
-    worldwideGross:number,
-    domesticGross:number,
-    internationalGross:number,
-    domesticOpening:number,
-    budget:string,
-    imDbRating:string,
-    metacriticRating:number,
-}
 type graphMaxVals={
     wwgross:number,
-    dmgross:number
+    dmgross:number,
+    runtime:number
 }
 
-export type { IMovie, IRank,IImageMovieItem,IBarGraphMovieItem,IListMovieItem,graphMaxVals }
+type movieId={
+    id:string,active:boolean
+}
+interface MovieFilter{
+    (movie:IMovie):boolean
+}
+interface MovieSorter{
+    (movie1:IMovie,movie2:IMovie):number
+}
+export type { IMovie, IRank,graphMaxVals,movieId,MovieFilter,MovieSorter }

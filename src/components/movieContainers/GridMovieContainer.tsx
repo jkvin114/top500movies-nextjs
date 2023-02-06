@@ -1,13 +1,13 @@
-import { IImageMovieItem, IMovie } from "@/util/types"
+import {  IMovie, movieId } from "@/util/types"
 import GridMovieItem from "../movieItems/GridMovieItem"
 
 type Props={
-    list:string[]
+    list:movieId[]
     movies:Map<string,IMovie>
 }
 export default function GridMovieConatiner({list,movies}:Props) {
     return (<><div>
-    {list.map(id=>(<GridMovieItem key={id} movie={movies.get(id)}/>))}
+    {list.map(mv=>(<GridMovieItem key={mv.id} movie={movies.get(mv.id)} active={mv.active}/>))}
     </div><style jsx>{`
 				div {
 					display:flex;

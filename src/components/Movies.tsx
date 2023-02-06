@@ -40,10 +40,10 @@ export default function Movies({allTimeRanks,movies}:Props) {
     return <>
     <div>
         
-    <Link href={"/?view=image"}>image</Link>
-    <Link href={"/?view=list"}>list</Link>
-    <Link href={"/?view=grid"}>grid</Link>
-    <Link href={"/?view=bar_graph"}>bar</Link>
+    <Link  href={{ pathname: '/', query: {...router.query, view: "image"} }}>image</Link>
+    <Link href={{ pathname: '/', query: {...router.query, view: "list"} }}>list</Link>
+    <Link href={{ pathname: '/', query: {...router.query, view: "grid"} }}>grid</Link>
+    <Link href={{ pathname: '/', query: {...router.query, view: "bar_graph"} }}>bar</Link>
     </div>
     <MovieContainer allTimeRanks={allTimeRanks} viewType={viewtype} movies={movies}
 				page={currPage} pageSize={10}/>

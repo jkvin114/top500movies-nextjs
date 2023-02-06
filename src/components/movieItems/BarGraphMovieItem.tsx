@@ -1,4 +1,4 @@
-import { graphMaxVals, IImageMovieItem, IMovie } from "@/util/types"
+import { graphMaxVals,  IMovie } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import { num2USD } from "@/util/util"
@@ -6,11 +6,12 @@ import { num2USD } from "@/util/util"
 type Props={
     movie:IMovie|undefined
     maxvals:graphMaxVals
+    active:boolean
 }
-export default function BarGraphMovieItem({movie,maxvals}:Props) {
+export default function BarGraphMovieItem({movie,maxvals,active}:Props) {
     return (<>
-        {movie?(<Link href={`/detail/`+movie.id}>
-            <div className="item">
+        {movie?(<>
+            <div className={`item ${!active&&"inactive"} bg-black`}>
                 <span className="bar">
 
                 </span>
@@ -36,7 +37,7 @@ export default function BarGraphMovieItem({movie,maxvals}:Props) {
                     top:0;
                     left:0;
                     height:30px;
-                    width:${(100*(movie.worldwideGross/maxvals.wwgross))+"%"};
+                    width:${(100*(movie.runtimeMins/maxvals.runtime))+"%"};
                     background:green;
                 }
                 .text{
@@ -54,8 +55,12 @@ export default function BarGraphMovieItem({movie,maxvals}:Props) {
                 b{
                     font-weight: normal;
                 }
-			`}</style>
-        </Link>):""}</>
+                
+                .item.inactive{
+                    filter:brightness(0.5);
+                }
+			`}</style></>
+        ):""}</>
         
     )
 }

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { IMovie, IRank } from "@/util/types";
 import Movies from "@/components/Movies";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const [list, setList] = useState<IMovie[]>([]);
@@ -16,10 +17,12 @@ export default function Home() {
 	
 		  setList(data.data);
 		});
+		///api/movierank?limit=200
+		//https://imdb-api.com/en/API/BoxOfficeAllTime/k_104ms4wr
 		fetch("/api/movierank?limit=200").then(async (res) => {
 			const data = await res.json()
 	  
-			setRanks(data.data.sort((a:IRank,b:IRank)=>a.rank-b.rank)
+			setRanks(data.data
 			.map((rk:IRank)=>rk.id));
 		  });
 	  },[updated]
@@ -27,8 +30,11 @@ export default function Home() {
   useEffect(()=>{
 	getData();
   },[])
-  
-
+  const router=useRouter()
+  const path=router.pathname
+  useEffect(()=>{
+	if(path==="detail") alert("detail")
+  },[path])
 
 	return (
 		<>
@@ -38,7 +44,7 @@ export default function Home() {
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Link href={"/home"}>
+			<Link href={"/home"} className="underline">
 			home
 			</Link>
 			<div>

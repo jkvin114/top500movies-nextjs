@@ -11,6 +11,10 @@ const nextConfig = {
         pathname: '/images/M/**',
       },
     ],
+    images: {
+      domains: ['m.media-amazon.com'],
+    },
+  
   },
  reactStrictMode: true,
  async redirects(){
