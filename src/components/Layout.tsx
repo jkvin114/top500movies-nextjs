@@ -1,10 +1,12 @@
 import { NextComponentType, NextPage } from "next"
 import { AppProps } from "next/app"
-import React, { ReactElement } from "react"
+import React, { ReactElement, useEffect } from "react"
+import NavBar from "./NavBar"
 
 export default function Layout({children}:React.PropsWithChildren) {
+   
     return (<>
-    <p>NAVBAR</p>
+        <NavBar/>
         {children}
     </>)
 }

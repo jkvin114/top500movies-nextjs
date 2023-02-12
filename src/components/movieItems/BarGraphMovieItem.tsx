@@ -11,18 +11,18 @@ type Props={
 export default function BarGraphMovieItem({movie,maxvals,active}:Props) {
     return (<>
         {movie?(<>
-            <div className={`item ${!active&&"inactive"} bg-black`}>
+            <div className={`item ${!active&&"inactive"}`}>
                 <span className="bar">
 
                 </span>
                 <div className="text">
                     
-                    <b className="value">
+                    <text className="value">
                         {num2USD(movie.worldwideGross)}
-                    </b>
-                    <b className="title">
+                    </text>
+                    <text className="title">
                         {movie.title}
-                    </b>
+                    </text>
                 </div>
             </div>
                 <style jsx>{`
@@ -52,10 +52,6 @@ export default function BarGraphMovieItem({movie,maxvals,active}:Props) {
                     display: inline-block;
                     width:120px;
                 }
-                b{
-                    font-weight: normal;
-                }
-                
                 .item.inactive{
                     filter:brightness(0.5);
                 }

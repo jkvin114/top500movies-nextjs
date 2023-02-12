@@ -10,7 +10,7 @@ type Props={
 export default function ListMovieItem({movie,active}:Props) {
     return (<>
         {movie?(<Link href={`/detail/`+movie.id}>
-            <div className={`item ${active?"active":"inactive"}`} >{movie.title +"  "+num2USD(extractNumber(movie.budget))}</div>
+            <div className={`item ${active?"active":"inactive"}`} >{movie.title +"  "+num2USD(movie.worldwideGross)}</div>
         </Link>):""}
         <style jsx>{`
             .item{

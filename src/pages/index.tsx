@@ -32,10 +32,6 @@ export default function Home() {
   },[])
   const router=useRouter()
   const path=router.pathname
-  useEffect(()=>{
-	if(path==="detail") alert("detail")
-  },[path])
-
 	return (
 		<>
 			<Head>
@@ -47,18 +43,13 @@ export default function Home() {
 			<Link href={"/home"} className="underline">
 			home
 			</Link>
-			<div>
+			<button className="btn btn-primary m-3">Button Primary</button>
+			<div className="text-body bg-body">
 				<Movies allTimeRanks={ranks}  movies={list}/>
 			</div>
-			<style jsx>{`
-				a {
-					color:red;
-					background-color:black;
-				}
-				.movie{
-					display:block;
-				}
-			`}</style>
+			<footer>
+				
+			</footer>
 		</>
 	)
 }

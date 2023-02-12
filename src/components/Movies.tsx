@@ -2,9 +2,12 @@ import { ViewType } from "@/util/enum";
 import { IMovie } from "@/util/types"
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MovieContainer from "./MovieContainer";
-
+import Image from "next/image";
+import FilterContainer from "./FilterContainer";
+import ViewSelectionContainer from "./ViewSelectionContainer";
+import { Filter } from "@/util/util";
 type Props={
     allTimeRanks:string[],
     movies:IMovie[]
@@ -12,8 +15,8 @@ type Props={
 export default function Movies({allTimeRanks,movies}:Props) {
 
     const [viewtype, setViewType] = useState<ViewType>(ViewType.LIST);
-    const [currPage, setPage] = useState<number>(1);
   
+	const [filter, setFilter] = useState<Filter>(new Filter())
     const router=useRouter()
     
     const { view } = router.query
@@ -37,15 +40,72 @@ export default function Movies({allTimeRanks,movies}:Props) {
 	}
   }, [view]);
 
+  	function getDirectors(movies: IMovie[]):string[]{
+		let map=new Map<string, number>()
+		for (const m of movies) {
+			let count=map.get(m.director)
+			if(count!==undefined){
+				map.set(m.director, count+1)
+			}
+			else{
+				map.set(m.director, 1)
+			}
+		}
+		return [...map.keys()].filter((name)=>{
+			let count=map.get(name)
+			return count!=undefined && count>=2
+		}).sort((a,b)=>a.localeCompare(b))
+	}
+	function getActors(movies: IMovie[]):string[]{
+		let map=new Map<string, number>()
+		for (const m of movies) {
+			for(const actor of m.actors){
+
+				let count=map.get(actor)
+				if(count!==undefined){
+					map.set(actor, count+1)
+				}
+				else{
+					map.set(actor, 1)
+				}
+			}
+		}
+		return [...map.keys()].filter((name)=>{
+			let count=map.get(name)
+			return count!=undefined && count>=4
+		}).sort((a,b)=>a.localeCompare(b))
+	}
+	function getCompanies(movies: IMovie[]):string[]{
+		let map=new Map<string, number>()
+		for (const m of movies) {
+			let count=map.get(m.companies[0])
+				if(count!==undefined){
+					map.set(m.companies[0], count+1)
+				}
+				else{
+					map.set(m.companies[0], 1)
+				}
+			// for(const comp of m.companies){
+
+				
+			// }
+		}
+		return [...map.keys()].filter((name)=>{
+			let count=map.get(name)
+			return count!=undefined && count>=3
+		}).sort((a,b)=>a.localeCompare(b))
+	}
+
+	const directors= useMemo(() => getDirectors(movies), [movies])
+	const actors= useMemo(() => getActors(movies), [movies])
+	const companies= useMemo(() => getCompanies(movies), [movies])
     return <>
-    <div>
-        
-    <Link  href={{ pathname: '/', query: {...router.query, view: "image"} }}>image</Link>
-    <Link href={{ pathname: '/', query: {...router.query, view: "list"} }}>list</Link>
-    <Link href={{ pathname: '/', query: {...router.query, view: "grid"} }}>grid</Link>
-    <Link href={{ pathname: '/', query: {...router.query, view: "bar_graph"} }}>bar</Link>
-    </div>
-    <MovieContainer allTimeRanks={allTimeRanks} viewType={viewtype} movies={movies}
-				page={currPage} pageSize={10}/>
+	<FilterContainer directors={directors} actors={actors} companies={companies} setFilter={setFilter}/>
+    <ViewSelectionContainer/>
+    <MovieContainer allTimeRanks={allTimeRanks} viewType={viewtype} movies={movies} filter={filter}/>
+	<style jsx>
+		{`
+		`}
+	</style>
     </>
 }

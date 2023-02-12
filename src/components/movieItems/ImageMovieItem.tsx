@@ -8,9 +8,9 @@ type Props={
 }
 export default function ImageMovieItem({movie,active}:Props) {
     return (<>
-        {movie?(<div className="item group">< Link href={`/detail/`+movie.id} >
+        {movie?(<div className="item col">< Link href={`/detail/`+movie.id} >
             <Image  src={movie.image} alt="poster"
-                className="rounded group-hover:opacity-0.6"
+                className="rounded"
 			    width={200} height={300}/>
                 <style jsx>{`
 				.item {
@@ -20,7 +20,7 @@ export default function ImageMovieItem({movie,active}:Props) {
                     overflow:hidden;
 				}
                 
-                .image-hover{
+                .item:hover{
                     transform:scale(1.1);
                     opacity:0.8;
                 }

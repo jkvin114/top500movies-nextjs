@@ -34,20 +34,18 @@ export class Filter {
 	static NUM_FILTERS = [FilterType.IN_YEAR, FilterType.UNTIL_YEAR, FilterType.MONTH]
 	static NO_CLASSIFY = [FilterType.ACTOR, FilterType.COMPANY, FilterType.DIRECTOR, FilterType.UNTIL_YEAR,FilterType.COUNTRY]
 	filterView: FilterViewType
-	filter: FilterType
-	filterVal: number
-	filterStr: string
+	filters: FilterType[]
+	filterVals: (number|string)[]
 	sort1: SortType
 	sort2: SortType
     sort1Type:number
     sort2Type:number
 	constructor() {
 		this.filterView = FilterViewType.HIDE
-		this.filter = FilterType.NONE
+		this.filters = []
 		this.sort1 = SortType.WW_GROSS
 		this.sort2 = SortType.NONE
-		this.filterVal = 0
-		this.filterStr = ""
+		this.filterVals = []
         this.sort1Type=-1
         this.sort2Type=-1
 	}
@@ -56,9 +54,10 @@ export class Filter {
 		this.filterView = fv
         return this
 	}
-	setFilter(ft: FilterType) {
+	addFilter(ft: FilterType,val:number|string) {
 	//	if (Filter.NO_CLASSIFY.includes(ft) && this.filterView === FilterViewType.CLASSIFY) return
-		this.filter = ft
+		this.filters.push(ft)
+		this.filterVals.push(val)
         return this
 	}
 	setSort1(s: SortType,type:number) {
@@ -80,14 +79,6 @@ export class Filter {
         } 
         return this
 	}
-	setFilterVal(v: number) {
-		this.filterVal = v
-        return this
-	}
-	setFilterStr(s: string) {
-		this.filterStr = s
-        return this
-	}
 
 	setSortTypes(s1: SortType, s2: SortType) {
 		this.sort1 = s1
@@ -96,10 +87,9 @@ export class Filter {
 	}
 	clone() {
 		let n = new Filter()
-		n.filter = this.filter
+		n.filters = this.filters
 		n.filterView = this.filterView
-		n.filterVal = this.filterVal
-		n.filterStr = this.filterStr
+		n.filterVals= this.filterVals
 		n.setSortTypes(this.sort1, this.sort2)
 		return n
 	}
@@ -157,33 +147,63 @@ export class Filter {
             }
 		}
 	}
-	private reduceMovie(m: IMovie): [string|number, boolean] {
-		switch (this.filter) {
+	private satisfyFilter(movie:IMovie,i:number){
+		switch (this.filters[i]) {
 			case FilterType.DIRECTOR:
-				return m.director === this.filterStr ? [this.filterStr, true] : ["", false]
+				return movie.director === this.filterVals[i]
 			case FilterType.COMPANY:
-				return m.companies.includes(this.filterStr) ? [this.filterStr, true] : ["", false]
+				return movie.companies.includes(String(this.filterVals[i]))
 			case FilterType.IN_YEAR:
-				return Number(m.year) === this.filterVal ? [this.filterVal, true] : [this.filterVal, false]
+				return Number(movie.year) === Number(this.filterVals[i])
 			case FilterType.UNTIL_YEAR:
-				return Number(m.year) <= this.filterVal
-					? ["Until " + this.filterVal, true]
-					: ["After " + this.filterVal, false]
+				return Number(movie.year) <= Number(this.filterVals[i])
             case FilterType.MONTH:
-                let month=Number(m.releaseDate.slice(5,7))
-                return month===this.filterVal?[month,true]:[month,false]
+                let month=Number(movie.releaseDate.slice(5,7))
+                return month===this.filterVals[i]
             case FilterType.ACTOR:
-                return m.actors.includes(this.filterStr) ? [this.filterStr, true] : ["", false]
+                return movie.actors.includes(String(this.filterVals[i]))
             case FilterType.COUNTRY:
-                return m.countries==="USA"?["USA",true]:["",false]
+				// return true
+                return movie.countries.split(", ").includes("USA")
             case FilterType.FRANCHISE:
-                let list=getFranchises(m.id)
+                let list=getFranchises(movie.id)
                 // if(list.length===0) return ["Other",false]
-                if(list.includes(this.filterStr)) return [this.filterStr,true]
-                return ["",false]
-            case FilterType.NONE: return ["",true]
+                return (list.includes(String(this.filterVals[i])))
+            case FilterType.NONE: return true
 		}
-		return ["", false]
+		return true
+	}
+	private reduceMovie(m: IMovie): [string|number, boolean] {
+		let valid=true
+		for(let i=0;i<this.filters.length;++i){
+			valid=valid&&this.satisfyFilter(m,i)
+		}
+		return ["",valid]
+		// switch (this.filter) {
+		// 	case FilterType.DIRECTOR:
+		// 		return m.director === this.filterStr ? [this.filterStr, true] : ["", false]
+		// 	case FilterType.COMPANY:
+		// 		return m.companies.includes(this.filterStr) ? [this.filterStr, true] : ["", false]
+		// 	case FilterType.IN_YEAR:
+		// 		return Number(m.year) === this.filterVal ? [this.filterVal, true] : [this.filterVal, false]
+		// 	case FilterType.UNTIL_YEAR:
+		// 		return Number(m.year) <= this.filterVal
+		// 			? ["Until " + this.filterVal, true]
+		// 			: ["After " + this.filterVal, false]
+        //     case FilterType.MONTH:
+        //         let month=Number(m.releaseDate.slice(5,7))
+        //         return month===this.filterVal?[month,true]:[month,false]
+        //     case FilterType.ACTOR:
+        //         return m.actors.includes(this.filterStr) ? [this.filterStr, true] : ["", false]
+        //     case FilterType.COUNTRY:
+        //         return m.countries==="USA"?["USA",true]:["",false]
+        //     case FilterType.FRANCHISE:
+        //         let list=getFranchises(m.id)
+        //         // if(list.length===0) return ["Other",false]
+        //         if(list.includes(this.filterStr)) return [this.filterStr,true]
+        //         return ["",false]
+        //     case FilterType.NONE: return ["",true]
+		// }
 	}
 	getFilter(): MovieFilter {
 		return (m: IMovie) => {
@@ -203,8 +223,6 @@ export class Filter {
         return mvs
     }
     run(movies:IMovie[]):movieId[]{
-        let m=this.doSort(movies)
-        // console.log(m)
         return this.doFilter(this.doSort(movies))
     }
     classify(movies:IMovie[]):Map<string,string[]>{
@@ -222,41 +240,39 @@ export class Filter {
     }
 }
 const F={
-    avengers:["tt4154796","tt4154756","tt0848228","tt2395427"],
-    mcu:["tt0371746","tt5095030","tt1228705","tt1981115","tt1211837","tt1843866","tt0948470","tt10648342","tt2015381","tt0145487","tt9114286","tt3501632","tt3896198","tt2250912","tt9419884","tt4154796","tt4154756","tt10872600","tt0848228","tt2395427",
+    "Avengers":["tt4154796","tt4154756","tt0848228","tt2395427"],
+    "MCU":["tt0371746","tt5095030","tt1228705","tt1981115","tt1211837","tt1843866","tt0948470","tt10648342","tt2015381","tt0145487","tt9114286","tt3501632","tt3896198","tt2250912","tt9419884","tt4154796","tt4154756","tt10872600","tt0848228","tt2395427",
     "tt1825683","tt1300854","tt3498820","tt6320628","tt4154664"],
-    mcu_phase1:["tt0371746","tt1228705","tt0848228"],
-    mcu_phase2:["tt1981115","tt1843866","tt2395427","tt1300854"],
-    mcu_phase3:["tt5095030","tt1211837","tt2015381","tt3501632","tt3896198","tt2250912","tt4154796","tt4154756","tt1825683","tt3498820","tt6320628"
+    "MCU phase 1":["tt0371746","tt1228705","tt0848228"],
+    "MCU phase 2":["tt1981115","tt1843866","tt2395427","tt1300854"],
+    "MCU phase 3":["tt5095030","tt1211837","tt2015381","tt3501632","tt3896198","tt2250912","tt4154796","tt4154756","tt1825683","tt3498820","tt6320628"
     ,"tt4154664"],
-    mcu_phase4:["tt10648342","tt9114286","tt9419884","tt10872600"],
-    marvel:["tt0371746","tt1981115","tt5095030","tt1228705","tt1211837","tt1872181","tt1843866","tt0948470","tt10648342","tt2015381","tt0316654","tt0145487","tt9114286","tt3501632","tt1270797","tt3896198","tt2250912","tt0413300","tt9419884","tt10872600","tt4154796","tt4154756","tt0848228","tt2395427",
+    "MCU phase 4":["tt10648342","tt9114286","tt9419884","tt10872600"],
+    "Marvel Comics":["tt0371746","tt1981115","tt5095030","tt1228705","tt1211837","tt1872181","tt1843866","tt0948470","tt10648342","tt2015381","tt0316654","tt0145487","tt9114286","tt3501632","tt1270797","tt3896198","tt2250912","tt0413300","tt9419884","tt10872600","tt4154796","tt4154756","tt0848228","tt2395427",
     "tt1825683","tt1300854","tt3498820","tt4154664"],
-    marvel_fox:["tt5463162","tt1431045","tt1877832"],
-    starwars:["tt0121765","tt0076759","tt0121766","tt0120915","tt2488496","tt2527336","tt2527338","tt3748528"],
-    starwars_disney:["tt2488496","tt2527336","tt2527338","tt3748528"],
-    starwars_original:["tt0076759"],
-    starwars_prequel:["tt0121765","tt0120915","tt0121766"],
-    avatar:["tt0499549","tt1630029"],
-    spiderman:["tt1872181","tt0316654","tt0145487","tt2250912","tt0413300","tt10872600","tt6320628"],
-    jurassic:["tt0369610","tt4881806","tt0107290","tt8041270"],
-    disney_live_action:["tt1587310","tt3040964","tt1014759","tt6105098","tt2771200","tt6139732"],
-    disney_animated:["tt0398286","tt0317705","tt2245084","tt3521164","tt1049413","tt2380307","tt2096673","tt0266543","tt0110357","tt2948356","tt2277860","tt4520988","tt2294629","tt3606756","tt1979376","tt0435761"],
-    harry_potter:["tt0304141","tt0330373","tt0295297","tt0417741","tt1201607","tt0241527","tt0926084","tt0373889"],
-    fantastic_beasts:["tt4123430","tt3183660"],
-    wizarding_world:["tt4123430","tt0304141","tt3183660","tt0330373","tt0295297","tt0417741","tt1201607","tt0241527","tt0926084","tt0373889"],
-    fast_furious:["tt5433138","tt6806448","tt1905041","tt2820852","tt4630562"],
-    dc:["tt0974015","tt0770828","tt1386697","tt1877830","tt0451279","tt2975590","tt1477834","tt1345836","tt7286456","tt0468569"],
-    dceu:["tt0974015","tt0770828","tt1386697","tt0451279","tt2975590","tt1477834"],
-    lord_of_the_rings:["tt0167260","tt0167261","tt0120737"],
-    hobbit:["tt0903624","tt2310332","tt1170358"],
-    middle_earth:["tt0120737","tt0167260","tt0903624","tt2310332","tt1170358","tt0167261"],
-    transformers:["tt3371366","tt0418279","tt1399103","tt2109248","tt1055369"],
-    pirates_of_carribean:["tt0325980","tt1790809","tt0383574","tt1298650","tt0449088"],
+    "Marvel Comics(Fox)":["tt5463162","tt1431045","tt1877832"],
+    "Star Wars":["tt0121765","tt0076759","tt0121766","tt0120915","tt2488496","tt2527336","tt2527338","tt3748528"],
+    "Star Wars (Disney)":["tt2488496","tt2527336","tt2527338","tt3748528"],
+    "Star Wars (Original)":["tt0076759"],
+    "Star Wars (Prequel)":["tt0121765","tt0120915","tt0121766"],
+    "Avatar":["tt0499549","tt1630029"],
+    "Spider-man":["tt1872181","tt0316654","tt0145487","tt2250912","tt0413300","tt10872600","tt6320628"],
+    "Jurassic":["tt0369610","tt4881806","tt0107290","tt8041270"],
+    "Disney Live-Action":["tt1587310","tt3040964","tt1014759","tt6105098","tt2771200","tt6139732"],
+    "Disney Animated":["tt0398286","tt0317705","tt2245084","tt3521164","tt1049413","tt2380307","tt2096673","tt0266543","tt0110357","tt2948356","tt2277860","tt4520988","tt2294629","tt3606756","tt1979376","tt0435761"],
+    "Harry Potter":["tt0304141","tt0330373","tt0295297","tt0417741","tt1201607","tt0241527","tt0926084","tt0373889"],
+    "Wizarding World":["tt4123430","tt0304141","tt3183660","tt0330373","tt0295297","tt0417741","tt1201607","tt0241527","tt0926084","tt0373889"],
+    "Fast & Furious":["tt5433138","tt6806448","tt1905041","tt2820852","tt4630562"],
+    "DC Comics":["tt0974015","tt0770828","tt1386697","tt1877830","tt0451279","tt2975590","tt1477834","tt1345836","tt7286456","tt0468569"],
+    "DCEU":["tt0974015","tt0770828","tt1386697","tt0451279","tt2975590","tt1477834"],
+    "Lord of the Rings":["tt0167260","tt0167261","tt0120737"],
+    "Hobbit":["tt0903624","tt2310332","tt1170358"],
+    "Middle Earth":["tt0120737","tt0167260","tt0903624","tt2310332","tt1170358","tt0167261"],
+    "Transformers":["tt3371366","tt0418279","tt1399103","tt2109248","tt1055369"],
+    "Pirates of the Carribean":["tt0325980","tt1790809","tt0383574","tt1298650","tt0449088"],
     "007":["tt1074638","tt2379713","tt2382320"],
-    toy_story:["tt1979376","tt0435761"],
-    hunger_games:["tt1951266","tt1392170","tt1951265","tt1951264"],
-    
+    "Toy Story":["tt1979376","tt0435761"],
+    "Hunger Games":["tt1951266","tt1392170","tt1951265","tt1951264"],
 }
 export function getFranchises(movieid:string){
     let list=[]
@@ -265,3 +281,4 @@ export function getFranchises(movieid:string){
     }
     return list
 }
+export const FRANCHISE_NAMES=Object.keys(F).sort((a,b)=>a.localeCompare(b))
