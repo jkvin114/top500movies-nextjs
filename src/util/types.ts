@@ -1,4 +1,4 @@
-import { type } from "os"
+import { STATE } from "./enum"
 
 type IMovie = {
     id: string,
@@ -37,7 +37,7 @@ type graphMaxVals={
 }
 
 type movieId={
-    id:string,active:boolean
+    id:string,state:STATE,rank:number
 }
 interface MovieFilter{
     (movie:IMovie):boolean

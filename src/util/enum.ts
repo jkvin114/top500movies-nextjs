@@ -33,5 +33,8 @@ export enum SortType {
 	DM_GROSS_RATIO = "% Domestic Gross",
 	NONE = "none",
 }
+export enum STATE{
+	NORMAL,ACTIVE,INACTIVE
+}
 
 export const sortTypeStr=["% Domestic Gross", "Running Time","Metacritic Rating","ImDB Rating","Worldwide Gross","Domestic Gross","International Gross", "Production Budget","Release Date",]

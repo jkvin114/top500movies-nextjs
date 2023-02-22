@@ -9,14 +9,14 @@ export default function ViewSelectionContainer(){
     return (<>
     <div className="filter-container bg-body-secondary">
         <div className="viewtype-item">
-
+            
             <Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "image"} }} className={"view-nav "+(view!=="image"? "inactive":"")}>
                 <Image src="/image.svg" alt="image" width={30} height={30} /><text className="d-none d-sm-inline">Poster</text>
             </Link>
         </div>
         <div className="viewtype-item">
 
-		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "list"} }}className={"view-nav "+(view!=="list"? "inactive":"")}>
+		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "list"} }}className={"view-nav "+(view==="list"||!view? "":"inactive")}>
 			<Image src="/list.svg" alt="list" width={30} height={30} /><text className="d-none d-sm-inline">List</text>
 		</Link>
         </div>

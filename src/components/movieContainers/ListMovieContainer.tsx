@@ -10,8 +10,7 @@ type Props={
     movies:Map<string,IMovie>
 }
 export default function ListMovieConatiner({list,movies}:Props) {
-    return (<><div>
-    {list.map(mv=>(<ListMovieItem key={mv.id} movie={movies.get(mv.id)} active={mv.active}/>))}
-    </div><style jsx>{`
-			`}</style></>)
+    return (<><div className="list-group">
+    {list.map(mv=>(<ListMovieItem key={mv.id} movie={movies.get(mv.id)} state={mv.state} rank={mv.rank}/>))}
+    </div></>)
 }

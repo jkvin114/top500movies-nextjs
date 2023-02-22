@@ -4,28 +4,60 @@ import Image from "next/image"
 import "./../../styles/Home.module.css"
 type Props={
     movie:IMovie|undefined
-    active:boolean
+    state:number
+    rank:number
 }
-export default function ImageMovieItem({movie,active}:Props) {
+export default function ImageMovieItem({movie,state,rank}:Props) {
+    
+    function onclick(){
+        window.location.href=`/detail/`+movie?.id
+    }
     return (<>
-        {movie?(<div className="item col">< Link href={`/detail/`+movie.id} >
+        {movie?(<div className={`item col card ${state===1&&"active bg-secondary"} ${state===2&&"inactive"}`}>
+        <span className="badge bg-warning rounded-pill">{rank}</span>
+            < Link href={`/detail/`+movie.id} >
             <Image  src={movie.image} alt="poster"
                 className="rounded"
 			    width={200} height={300}/>
+            </Link>
+            <div className="card-body">
+                <h5 onClick={onclick} className="card-title">{movie.title}</h5>
+   
+            </div>
                 <style jsx>{`
 				.item {
-                    height:300px;
                     margin:7px;
                     box-shadow:3px;
                     overflow:hidden;
+                    border:none;
+                    position:relative;
+                    padding-top:7px;
 				}
-                
-                .item:hover{
-                    transform:scale(1.1);
-                    opacity:0.8;
+                .card-title{
+                    cursor:pointer;
+                    font-weight:bold;
+                    color:whitesmoke;
+                }
+                .card-title:hover{
+                    text-decoration:underline;
+
+                }
+            .badge{
+                position:absolute;
+                top:0;
+                left:0;
+                color:black;
+                font-size:15px;
+            }
+            
+                .item.active{
+                    
+                }
+                .item.inactive{
+                    filter:brightness(0.5);
                 }
 			`}</style>
-        </Link></div>):""}</>
+        </div>):""}</>
         
     )
 }

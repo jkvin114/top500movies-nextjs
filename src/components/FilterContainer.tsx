@@ -2,7 +2,7 @@ import Image from "next/image"
 import FilterSelectionItem from "./FilterSelectionItem"
 import { Filter, FRANCHISE_NAMES } from "@/util/util"
 import { FilterType, FilterViewType, SortType, sortTypeStr } from "@/util/enum"
-import { Dispatch, FormEvent, SetStateAction } from "react"
+import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, InputHTMLAttributes, SetStateAction, useState } from "react"
 import { useRouter } from "next/router"
 type Props={
     directors:string[]
@@ -13,13 +13,16 @@ type Props={
 
 export default function FilterContainer({directors,actors,companies,setFilter}:Props) {
     const router=useRouter()
+    const [yearOption,setYearOption]=useState<string>("in")
+    const [filterViewOption,setFilterViewOption]=useState<string>("hide")
+    const [sortOption,setSortOption]=useState<string>("decrease")
+    const [sortType,setSortType]=useState<string>("Worldwide Gross")
 
     function onSubmit(event:any ){
         event.preventDefault()
         const sorttype=event.target.sort_type.value==="increase"?1:-1
         const sort=event.target.sortby.value==="None"?SortType.WW_GROSS:event.target.sortby.value
         let filter=new Filter().setSort1(sort,sorttype)
-       
         if(event.target.year.value!==""){
             if(event.target.year_type.value==="until"){
                 filter.addFilter(FilterType.UNTIL_YEAR,Number(event.target.year.value))
@@ -55,6 +58,19 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
     function onreset(){
         (document.getElementById("filterform") as any)?.reset()
     }
+    function changeYearType(event:ChangeEvent<HTMLInputElement>){
+        
+        setYearOption(event.target.value)
+    }
+    function changeSortType(event:ChangeEvent<HTMLInputElement>){
+        setSortOption(event.target.value)
+    }
+    function changeFilterView(event:ChangeEvent<HTMLInputElement>){
+        setFilterViewOption(event.target.value)
+    }
+    function changeSort(event:FormEvent<HTMLSelectElement>){
+        setSortType(event.currentTarget.value)
+    }
     return (<><div className="filter-container bg-body-secondary">
         <h5 data-bs-toggle="collapse" data-bs-target="#filter-content" ><Image src="/filter.svg" width={30} height={30} alt=""/>Filters
 
@@ -70,15 +86,15 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
             <div className="form-floating filter-item">
                 <input type="number" name="year" className="form-control" id="input-year" placeholder="year"
             />
-                <label htmlFor="input-year">Year</label>
+                <label  htmlFor="input-year">Year</label>
                 <div className="form-check-inline">
-                    <input className="form-check-input" type="radio" name="year_type" value="until" id="input-until-year"/>
+                    <input onChange={changeYearType} className="form-check-input" type="radio" name="year_type" value="until" id="input-until-year" checked={yearOption==="until"}/>
                     <label className="form-check-label" htmlFor="input-until-year">
                         Until year
                     </label>
                     </div>
                     <div className="form-check-inline">
-                    <input className="form-check-input" type="radio" name="year_type" value="in" id="input-in-year"/>
+                    <input onChange={changeYearType} className="form-check-input" type="radio" name="year_type" value="in" id="input-in-year" checked={yearOption==="in"}/>
                     <label className="form-check-label" htmlFor="input-in-year">
                         In year
                     </label>
@@ -94,19 +110,19 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
         <Image src="/filter.svg" width={30} height={30} alt="view" className="m-1"/>
             <div className="form-check-inline">
                 
-                <input className="form-check-input" type="radio" name="filter_view" value="hide" id="input-view-hide"/>
+                <input onChange={changeFilterView}  className="form-check-input" type="radio" name="filter_view" value="hide" id="input-view-hide" checked={filterViewOption==="hide"}/>
                 <label className="form-check-label" htmlFor="input-view-hide">
                     Hide
                 </label>
                 </div>
                 <div className="form-check-inline">
-                <input className="form-check-input" type="radio" name="filter_view" value="highlight" id="input-view-highlight" />
+                <input onChange={changeFilterView}  className="form-check-input" type="radio" name="filter_view" value="highlight" id="input-view-highlight"  checked={filterViewOption==="highlight"}/>
                 <label className="form-check-label" htmlFor="input-view-highlight">
                     Highlight
                 </label>
                 </div>
                 <div className="form-check-inline">
-                <input className="form-check-input" type="radio" name="filter_view" value="category" id="input-view-category"/>
+                <input onChange={changeFilterView}  className="form-check-input" type="radio" name="filter_view" value="category" id="input-view-category"checked={filterViewOption==="category"}/>
                 <label className="form-check-label" htmlFor="input-view-category">
                     Category
                 </label>
@@ -117,12 +133,11 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
 
             <div className="input-group selection">
                 <label className="input-group-text" htmlFor="input-sortby">Sort by</label>
-                <select className="form-select" id="input-sortby" name="sortby">
-                <option selected>None</option>
+                <select className="form-select" id="input-sortby" name="sortby" onChange={changeSort}>
                 {
                     sortTypeStr
                     .map((name)=>
-                        (<option value={name} key={name}>{name}</option>)
+                        (<option value={name} key={name} selected={sortType===name}>{name}</option>)
                     )
                 }
                     
@@ -130,13 +145,13 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
             </div>
         
             <div className="form-check-inline">
-                <input className="form-check-input" type="radio" name="sort_type" value="increase" id="input-sort-increase"/>
+                <input onChange={changeSortType}  className="form-check-input" type="radio" name="sort_type" value="increase" id="input-sort-increase"checked={sortOption==="increase"}/>
                 <label className="form-check-label" htmlFor="input-sort-increase">
                     Increasing
                 </label>
                 </div>
                 <div className="form-check-inline">
-                <input className="form-check-input" type="radio" name="sort_type" value="decrease" id="input-sort-decrease" />
+                <input onChange={changeSortType}  className="form-check-input" type="radio" name="sort_type" value="decrease" id="input-sort-decrease" checked={sortOption==="decrease"}/>
                 <label className="form-check-label" htmlFor="input-sort-decrease">
                     Decreasing
                 </label>

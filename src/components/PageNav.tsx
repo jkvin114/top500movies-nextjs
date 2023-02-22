@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, FormEvent } from "react";
+import { ChangeEventHandler, FormEvent, useState } from "react";
 
 type Prop={
     currPage:number,currPageSize:number,totalLength:number
@@ -8,8 +8,10 @@ type Prop={
 export default function PageNav({currPage,currPageSize,totalLength}:Prop){
     const router=useRouter()
 
+    const [pagesize,setPagesize]=useState<number>(10)
     function pageChange(e:FormEvent<HTMLSelectElement>){
         let pg=e.currentTarget.value
+        setPagesize(Number(pg))
         router.push({
             pathname: '/',
             query: {...router.query, pagesize:pg }
@@ -47,7 +49,7 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
                 {
                     [...Array(Math.ceil(totalLength / currPageSize)+1)].map((e, i) =>(
                         
-                    (i>0 && i>Math.floor((currPage-1)/5)*5 && i<=Math.ceil((currPage)/5)*5)&&(<li className={"page-item "+(currPage==i&&"active")}>
+                    (i>0 && i>Math.floor((currPage-1)/5)*5 && i<=Math.ceil((currPage)/5)*5)&&(<li key={i} className={"page-item "+(currPage==i&&"active")}>
                         <Link className="page-link" scroll={false} href={{
                             pathname: "/",
                             query: {
@@ -79,10 +81,10 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
         </nav>
         <div className="input-group selection">
             <label className="input-group-text" htmlFor={"inputGroup # items"}># items</label>
-            <select className="form-select" id={"inputGroup # items"} onChange={pageChange}>
+            <select defaultValue={String(pagesize)} className="form-select" id={"inputGroup # items"} onChange={pageChange}>
                 {
                     ["5","10","20","50"].map((item)=>(
-                        <option value={item} key={item}>{item}</option>
+                        <option  value={item} key={item} >{item}</option>
                     ))
                 }
             </select>

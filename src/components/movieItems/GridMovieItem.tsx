@@ -5,47 +5,85 @@ import { num2USD } from "@/util/util"
 
 type Props={
     movie:IMovie|undefined
-    active:boolean
+    state:number
+    extraData?:string
+    rank:number
 }
-export default function GridMovieItem({movie,active}:Props) {
+export default function GridMovieItem({movie,state,extraData,rank}:Props) {
+
+    function onclick(){
+        window.location.href=`/detail/`+movie?.id
+    }
     return (<>
-        {movie?(<div className={`item ${active?"active":"inactive"}`}><Link href={`/detail/`+movie.id}>
-            <div>
-                <div className="title">{movie.title}</div>
-                <div className="content">
-                    <div>
-                    <Image src={movie.image} alt="poster"
+        {movie?(
+        <div onClick={onclick} className={`item ${state===0&&"bg-body-secondary "} ${state===1&&"active bg-body-secondary "} ${state===2&&"inactive "} card mb-3`}>
+            <span className="badge bg-warning rounded-pill">{rank}</span>
+        <div className={`row g-0`}>
+          <div className="col-md-4">
+          <Image src={movie.image} alt="poster"
 			            width={100} height={150}/>
-                    </div>
-                    <div>
-                        <div>Release date: {movie.releaseDate}</div>
-                        <div>Revenue: {num2USD(movie.worldwideGross)}</div>
-                        <div>Director: {movie.director}</div>
-                        <div>Runtime: {movie.runtimeMins} mins</div>
-                    </div>
+          </div>
+          <div className="col-md-8">
+            <div className="card-body">
+                <h6 className="card-subtitle movie-title">{movie.title}</h6>
+                <div className="card-text">
+                    <div>{movie.runtimeMins} mins</div>
+                    <div className="card-text"><small>{movie.releaseDate} </small></div>
                 </div>
             </div>
-        </Link></div>
+          </div>
+        </div>
+        <div className="row">
+            <div className="card-text">
+                <div>By {movie.director}</div>
+                <div>Revenue: {num2USD(movie.worldwideGross)}</div>
+                <div className="card-text"><small className="text-muted">{extraData&&extraData} </small></div>
+            </div>
+        </div>
+      </div>
+        // <div className={`item ${active?"active":"inactive"}`}><Link href={`/detail/`+movie.id}>
+        //     <div>
+        //         <div className="title">{movie.title}</div>
+        //         <div className="content">
+        //             <div>
+        //             <Image src={movie.image} alt="poster"
+		// 	            width={100} height={150}/>
+        //             </div>
+        //             <div>
+        //                 <div>Release date: {movie.releaseDate}</div>
+        //                 <div>Revenue: {num2USD(movie.worldwideGross)}</div>
+        //                 <div>Director: {movie.director}</div>
+        //                 <div>Runtime: {movie.runtimeMins} mins</div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // </Link></div>
         ):""}
         <style jsx>{`
             .item{
-                border:2px solid black;
+                position:relative;
                 margin:3px;
                 padding:5px;
-                font-size:15px;
                 display:block;
-                background:black;
-                color:white;
                 width:300px;
-                {/* flex-grow:1; */}
-            }
-            .content{
-                display:grid;
-                grid-template-columns:100px 200px;
+                cursor:pointer;
             } .item.inactive{
                 filter:brightness(0.7);
             }
+            .badge{
+                position:absolute;
+                top:0;
+                left:0;
+                color:black;
+            }
+            
             .item.active{
+                outline:2px solid whitesmoke;
+            }
+            .item.active{
+            }
+            .movie-title{
+                font-weight:bold;
             }
 			`}</style>
     </>)

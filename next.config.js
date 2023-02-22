@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: 'm.media-amazon.com',
         port: '',
         pathname: '/images/M/**',
+      },{
+        protocol: 'https',
+        hostname: 'imdb-api.com',
+        port: '',
+        pathname: '/images/original/**',
       },
     ],
     images: {
