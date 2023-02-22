@@ -1,23 +1,27 @@
-import {  IMovie } from "@/util/types"
+import {  IMovie, movieState } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import { num2USD } from "@/util/util"
+import { SortType } from "@/util/enum"
 
 type Props={
     movie:IMovie|undefined
-    state:number
-    extraData?:string
-    rank:number
+    state:movieState
 }
-export default function GridMovieItem({movie,state,extraData,rank}:Props) {
+export default function GridMovieItem({movie,state}:Props) {
 
     function onclick(){
         window.location.href=`/detail/`+movie?.id
     }
+    function needExtra(){
+        if(state.extraType==null) return false
+        return ![SortType.WW_GROSS,SortType.RELEASE,SortType.RELEASE_OLD,SortType.RUNNING_TIME,SortType.RUNNING_TIME_INC,
+        ].includes(state.extraType)
+    }
     return (<>
         {movie?(
-        <div onClick={onclick} className={`item ${state===0&&"bg-body-secondary "} ${state===1&&"active bg-body-secondary "} ${state===2&&"inactive "} card mb-3`}>
-            <span className="badge bg-warning rounded-pill">{rank}</span>
+        <div onClick={onclick} className={`item ${state.state===0&&"bg-body-secondary "} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
+            <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0`}>
           <div className="col-md-4">
           <Image src={movie.image} alt="poster"
@@ -37,7 +41,7 @@ export default function GridMovieItem({movie,state,extraData,rank}:Props) {
             <div className="card-text">
                 <div>By {movie.director}</div>
                 <div>Revenue: {num2USD(movie.worldwideGross)}</div>
-                <div className="card-text"><small className="text-muted">{extraData&&extraData} </small></div>
+                <div className="card-text"><small className="text-muted">{(state.extraData!=null&& needExtra())&&state.extraData} </small></div>
             </div>
         </div>
       </div>

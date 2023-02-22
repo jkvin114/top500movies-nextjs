@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useMemo, useState } from "react"
 import { FilterType, FilterViewType, SortType, ViewType } from "@/util/enum"
-import { graphMaxVals, IMovie, movieId } from "@/util/types"
+import { graphMaxVals, IMovie, movieState } from "@/util/types"
 import ImageMovieConatiner from "./movieContainers/ImageMovieContainer"
 import ListMovieContainer from "./movieContainers/ListMovieContainer"
 import GridMovieConatiner from "./movieContainers/GridMovieContainer"
@@ -24,12 +24,12 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 		dmgross: 0,
 		runtime: 0,
 	})
-	function sortMovies(movies: IMovie[],filter:Filter): movieId[] {
+	function sortMovies(movies: IMovie[],filter:Filter): movieState[] {
 		let sorted = filter
 			.run(movies)
-		let maxww = getMaxVal(sorted, (id: movieId) => movieMap.get(id.id)?.worldwideGross)
-		let maxdm = getMaxVal(sorted, (id: movieId) => movieMap.get(id.id)?.domesticGross)
-		let maxruntime = getMaxVal(sorted, (id: movieId) => movieMap.get(id.id)?.runtimeMins)
+		let maxww = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.worldwideGross)
+		let maxdm = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.domesticGross)
+		let maxruntime = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.runtimeMins)
 
 		setMaxvals({ ...maxvals, wwgross: maxww, dmgross: maxdm, runtime: maxruntime })
 		return sorted
@@ -54,17 +54,19 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 	return (
 		<>
 			<div className="movie-container">
-				<PageNav currPage={currPage} currPageSize={currPageSize} totalLength={sortedList.length}/>
-                <h5>{sortedList.length} movies found.</h5>
-                <h5>Sorted by {filter.sort1}</h5>
+                <h5><b>{((currPage - 1) * currPageSize+1)+"-"+Math.min(sortedList.length,(currPage) * currPageSize )+"/"+sortedList.length}</b> Movies</h5>
+                {/* <h5>Sorted by {filter.sort1}</h5> */}
 				{viewType === ViewType.IMAGE && <ImageMovieConatiner list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.LIST && <ListMovieContainer list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.GRID && <GridMovieConatiner list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.BAR_GRAPH && <BarGraphConatiner list={slicedList} movies={movieMap} maxvals={maxvals} />}
+				<PageNav currPage={currPage} currPageSize={currPageSize} totalLength={sortedList.length}/>
+
 			</div>
 			<style jsx>{`
                 h5{
-                    text-align:center;
+                    text-align:left;
+					font-size:15px;
                 }
                 `}</style>
 		</>

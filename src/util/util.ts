@@ -1,5 +1,5 @@
 import { FilterType, FilterViewType, SortType, STATE } from "./enum"
-import { IMovie, MovieFilter, movieId, MovieSorter } from "./types"
+import { IMovie, MovieFilter,  movieState, MovieSorter } from "./types"
 
 export const roundToNearest=function(num:number,digit?:number){
 	if(!digit) digit=0
@@ -9,7 +9,7 @@ export const roundToNearest=function(num:number,digit?:number){
 	return Math.round(num) / (10**-digit)
 }
 export function num2USD(num: number): string {
-	if (num < 0) return "N/A"
+	if (num <= 0) return "N/A"
 	let str = String(num)
 	let s = ""
 	for (let i = str.length - 1; i >= 0; i--) {
@@ -43,7 +43,9 @@ export function extractNumber(str: string) {
 	if (!s) return -1
 	return Number(s)
 }
-
+export function toPercent(num:number){
+	return roundToNearest(num*100,-1)+"%"
+}
 export class Filter {
 	static NUM_FILTERS = [FilterType.IN_YEAR, FilterType.UNTIL_YEAR, FilterType.MONTH]
 	static NO_CLASSIFY = [
@@ -57,17 +59,17 @@ export class Filter {
 	filters: FilterType[]
 	filterVals: (number | string)[]
 	sort1: SortType
-	sort2: SortType
 	sort1Type: number
-	sort2Type: number
 	constructor() {
 		this.filterView = FilterViewType.HIDE
 		this.filters = []
 		this.sort1 = SortType.WW_GROSS
-		this.sort2 = SortType.NONE
 		this.filterVals = []
 		this.sort1Type = -1
-		this.sort2Type = -1
+	}
+	resetFilter(){
+		this.filterVals = []
+		this.filters = []
 	}
 	setFilterView(fv: FilterViewType) {
 		//		if (Filter.NO_CLASSIFY.includes(this.filter) && fv === FilterViewType.CLASSIFY) return
@@ -83,23 +85,11 @@ export class Filter {
 	setSort1(s: SortType, type: number) {
 		this.sort1 = s
 		this.sort1Type = type
-		if (this.sort2 === s) this.sort2 = SortType.NONE
-		return this
-	}
-	setSort2(s: SortType, type: number) {
-		if (this.sort1 === s) {
-			this.sort2 = SortType.NONE
-			this.sort1Type = type
-		} else {
-			this.sort2 = s
-			this.sort2Type = type
-		}
 		return this
 	}
 
-	setSortTypes(s1: SortType, s2: SortType) {
+	setSortTypes(s1: SortType) {
 		this.sort1 = s1
-		this.sort2 = s2
 		return this
 	}
 	clone() {
@@ -107,14 +97,61 @@ export class Filter {
 		n.filters = this.filters
 		n.filterView = this.filterView
 		n.filterVals = this.filterVals
-		n.setSortTypes(this.sort1, this.sort2)
+		n.setSortTypes(this.sort1)
 		return n
 	}
-	private getSorterProp(movie: IMovie, num: number) {
+	private getExtraData(movie: IMovie) :[SortType,string|null]{
+		let data:[SortType,string|null]=[this.sort1,null]
+		switch(this.sort1) {
+			case SortType.BUDGET:
+				data[1]="Budget: "+movie.budget
+				break
+			case SortType.DM_GROSS:
+				data[1]="Domestic Gross: "+num2USD(movie.domesticGross)
+				break
+			case SortType.INTL_GROSS:
+				data[1]="International Gross: "+num2USD(movie.worldwideGross - movie.domesticGross)
+				break
+			case SortType.RELEASE_OLD:
+			case SortType.RELEASE:
+				data[1]="Release: "+movie.releaseDate
+				break
+			case SortType.RATING_IMDB_INC:
+			case SortType.RATING_IMDB:
+				data[1]="ImDB Rating: "+movie.imDbRating
+				break
+			case SortType.RATING_META_INC:
+			case SortType.RATING_META:
+				if(!movie.metacriticRating) break
+				data[1]="Metacritic Rating: "+movie.metacriticRating
+				break
+			case SortType.RUNNING_TIME_INC:
+			case SortType.RUNNING_TIME:
+				data[1]="Runtime: "+movie.runtimeMins+" mins"
+				break
+			case SortType.DM_GROSS_RATIO_INC:
+			case SortType.DM_GROSS_RATIO:
+				if(movie.worldwideGross<=0) break
+				data[1]="Domestic Revenue: "+ toPercent(movie.domesticGross/movie.worldwideGross)
+				break
+			case SortType.PROFIT_INC:
+			case SortType.PROFIT:
+				let budget=extractNumber(String(movie.budget))
+				if(budget===-1 || movie.worldwideGross===0) break
+				data[1]="Profit: "+ toPercent(movie.worldwideGross / budget)
+				break
+		}
+		if(!data[1] || data[1]==="null") data[1]=null
+		return data
+	}
+	private getSorterProp(movie: IMovie) {
 		let prop: string | number = 0
-		switch (num === 0 ? this.sort1 : this.sort2) {
+		let mul=1
+		switch(this.sort1) {
 			case SortType.BUDGET:
 				prop = movie.budget
+				let b=extractNumber(String(movie.budget))
+				if(b===-1 || movie.budget[0]!=="$") prop=-1*mul
 				break
 			case SortType.WW_GROSS:
 				prop = movie.worldwideGross
@@ -125,42 +162,55 @@ export class Filter {
 			case SortType.INTL_GROSS:
 				prop = movie.worldwideGross - movie.domesticGross
 				break
+			case SortType.RELEASE_OLD:
+				mul=-1
 			case SortType.RELEASE:
 				prop = movie.releaseDate
 				break
+			case SortType.RATING_IMDB_INC:
+				mul=-1
 			case SortType.RATING_IMDB:
 				prop = movie.imDbRating
 				break
+			case SortType.RATING_META_INC:
+				mul=-1
 			case SortType.RATING_META:
 				prop = movie.metacriticRating
+
 				break
+			case SortType.RUNNING_TIME_INC:
+				mul=-1
 			case SortType.RUNNING_TIME:
 				prop = movie.runtimeMins
 				break
+			case SortType.DM_GROSS_RATIO_INC:
+				mul=-1
 			case SortType.DM_GROSS_RATIO:
 				prop = movie.domesticGross / movie.worldwideGross
 				break
+			case SortType.PROFIT_INC:
+				mul=-1
+			case SortType.PROFIT:
+				let budget=extractNumber(String(movie.budget))
+				if(budget===-1 || movie.worldwideGross===0) prop=-1*mul
+				else prop = movie.worldwideGross / budget
+				break
 		}
-		if (typeof prop === "string") return extractNumber(prop)
-		else return prop
+		if (typeof prop === "string") return extractNumber(prop) * mul
+		else return prop * mul
 	}
 	getSorter(): MovieSorter {
 		return (m1: IMovie, m2: IMovie) => {
-			let p1 = this.getSorterProp(m1, 0)
-			let p2 = this.getSorterProp(m2, 0)
+			let p1 = this.getSorterProp(m1)
+			let p2 = this.getSorterProp(m2)
 			if (p1 === -1) {
 				return 1
 			}
 			if (p2 === -1) {
 				return -1
 			}
-			if (p1 === p2) {
-				let p21 = this.getSorterProp(m1, 1)
-				let p22 = this.getSorterProp(m2, 1)
-				return this.sort2Type < 0 ? p22 - p21 : p21 - p22
-			} else {
-				return this.sort1Type < 0 ? p2 - p1 : p1 - p2
-			}
+			return this.sort1Type < 0 ? p2 - p1 : p1 - p2
+			
 		}
 	}
 	private satisfyFilter(movie: IMovie, i: number) {
@@ -230,8 +280,9 @@ export class Filter {
 	doSort(movies: IMovie[]) {
 		return movies.sort(this.getSorter())
 	}
-	doFilter(movies: IMovie[]): movieId[] {
+	doFilter(movies: IMovie[]): movieState[] {
 		let mvs = movies.map((m,i) => {
+			const [extraType,extraData]=this.getExtraData(m)
 			return {
 				id: m.id,
 				state: this.reduceMovie(m)[1]
@@ -239,7 +290,9 @@ export class Filter {
 						? STATE.NORMAL
 						: STATE.ACTIVE
 					: STATE.INACTIVE,
-					rank:i+1
+				rank:i+1,
+				extraData:extraData,
+				extraType:extraType
 			}
 		})
 		if (this.filterView === FilterViewType.HIDE) return mvs.filter((mv) => mv.state===STATE.NORMAL)
@@ -247,7 +300,7 @@ export class Filter {
 
 		return mvs
 	}
-	run(movies: IMovie[]): movieId[] {
+	run(movies: IMovie[]): movieState[] {
 		return this.doFilter(this.doSort(movies))
 	}
 	classify(movies: IMovie[]): Map<string, string[]> {

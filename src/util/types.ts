@@ -1,4 +1,4 @@
-import { STATE } from "./enum"
+import { SortType, STATE } from "./enum"
 
 type IMovie = {
     id: string,
@@ -36,8 +36,8 @@ type graphMaxVals={
     runtime:number
 }
 
-type movieId={
-    id:string,state:STATE,rank:number
+type movieState={
+    id:string,state:STATE,rank:number,extraData?:string|null,extraType?:SortType
 }
 interface MovieFilter{
     (movie:IMovie):boolean
@@ -45,4 +45,4 @@ interface MovieFilter{
 interface MovieSorter{
     (movie1:IMovie,movie2:IMovie):number
 }
-export type { IMovie, IRank,graphMaxVals,movieId,MovieFilter,MovieSorter }
+export type { IMovie, IRank,graphMaxVals,movieState,MovieFilter,MovieSorter }

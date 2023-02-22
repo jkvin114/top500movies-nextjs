@@ -9,20 +9,20 @@ type Props={
     actors:string[]
     companies:string[]
     setFilter:Dispatch<SetStateAction<Filter>>
+    oldFilter:Filter
 }
 
-export default function FilterContainer({directors,actors,companies,setFilter}:Props) {
+export default function FilterContainer({directors,actors,companies,setFilter,oldFilter}:Props) {
     const router=useRouter()
     const [yearOption,setYearOption]=useState<string>("in")
     const [filterViewOption,setFilterViewOption]=useState<string>("hide")
-    const [sortOption,setSortOption]=useState<string>("decrease")
-    const [sortType,setSortType]=useState<string>("Worldwide Gross")
 
     function onSubmit(event:any ){
         event.preventDefault()
-        const sorttype=event.target.sort_type.value==="increase"?1:-1
-        const sort=event.target.sortby.value==="None"?SortType.WW_GROSS:event.target.sortby.value
-        let filter=new Filter().setSort1(sort,sorttype)
+        // const sorttype=event.target.sort_type.value==="increase"?1:-1
+       // const sort=event.target.sortby.value==="None"?SortType.WW_GROSS:event.target.sortby.value
+        let filter=oldFilter.clone()
+        filter.resetFilter()
         if(event.target.year.value!==""){
             if(event.target.year_type.value==="until"){
                 filter.addFilter(FilterType.UNTIL_YEAR,Number(event.target.year.value))
@@ -62,14 +62,8 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
         
         setYearOption(event.target.value)
     }
-    function changeSortType(event:ChangeEvent<HTMLInputElement>){
-        setSortOption(event.target.value)
-    }
     function changeFilterView(event:ChangeEvent<HTMLInputElement>){
         setFilterViewOption(event.target.value)
-    }
-    function changeSort(event:FormEvent<HTMLSelectElement>){
-        setSortType(event.currentTarget.value)
     }
     return (<><div className="filter-container bg-body-secondary">
         <h5 data-bs-toggle="collapse" data-bs-target="#filter-content" ><Image src="/filter.svg" width={30} height={30} alt=""/>Filters
@@ -78,7 +72,7 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
         <div className="filter-content collapse" id="filter-content">
            
             <FilterSelectionItem formtitle="Director" items={directors}/>
-            <FilterSelectionItem formtitle="Series/Franchise" items={FRANCHISE_NAMES} formname="series"/>
+            <FilterSelectionItem formtitle="Series/Franchise(Beta)" items={FRANCHISE_NAMES} formname="series"/>
             <FilterSelectionItem formtitle="Company" items={companies}/>
             <FilterSelectionItem formtitle="Actor" items={actors}/>
             <FilterSelectionItem formtitle="Release Month" items={[...new Array<number>(12)].map((e,i)=>String(i+1))}  formname="month"/>
@@ -129,34 +123,7 @@ export default function FilterContainer({directors,actors,companies,setFilter}:P
                 </div>
             </div>
             
-        <div className=" filter-item">
-
-            <div className="input-group selection">
-                <label className="input-group-text" htmlFor="input-sortby">Sort by</label>
-                <select className="form-select" id="input-sortby" name="sortby" onChange={changeSort}>
-                {
-                    sortTypeStr
-                    .map((name)=>
-                        (<option value={name} key={name} selected={sortType===name}>{name}</option>)
-                    )
-                }
-                    
-                </select>
-            </div>
         
-            <div className="form-check-inline">
-                <input onChange={changeSortType}  className="form-check-input" type="radio" name="sort_type" value="increase" id="input-sort-increase"checked={sortOption==="increase"}/>
-                <label className="form-check-label" htmlFor="input-sort-increase">
-                    Increasing
-                </label>
-                </div>
-                <div className="form-check-inline">
-                <input onChange={changeSortType}  className="form-check-input" type="radio" name="sort_type" value="decrease" id="input-sort-decrease" checked={sortOption==="decrease"}/>
-                <label className="form-check-label" htmlFor="input-sort-decrease">
-                    Decreasing
-                </label>
-            </div>
-        </div>
         <div className="filter-item btn-container">
             <button type="button"  className="btn btn-secondary" onClick={onreset}>Reset</button>
             <button type="submit" className="btn btn-primary">Apply</button>

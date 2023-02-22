@@ -2,12 +2,13 @@ import { ViewType } from "@/util/enum";
 import { IMovie } from "@/util/types"
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { SetStateAction, useEffect, useMemo, useState } from "react";
 import MovieContainer from "./MovieContainer";
 import Image from "next/image";
 import FilterContainer from "./FilterContainer";
 import ViewSelectionContainer from "./ViewSelectionContainer";
 import { Filter } from "@/util/util";
+import { SortSelection } from "./SortSelectionContainer";
 type Props={
     allTimeRanks:string[],
     movies:IMovie[]
@@ -100,8 +101,9 @@ export default function Movies({allTimeRanks,movies}:Props) {
 	const actors= useMemo(() => getActors(movies), [movies])
 	const companies= useMemo(() => getCompanies(movies), [movies])
     return <>
-	<FilterContainer directors={directors} actors={actors} companies={companies} setFilter={setFilter}/>
+	<FilterContainer directors={directors} actors={actors} companies={companies} setFilter={setFilter} oldFilter={filter}/>
     <ViewSelectionContainer/>
+	<SortSelection setFilter={setFilter}  oldFilter={filter}/>
     <MovieContainer allTimeRanks={allTimeRanks} viewType={viewtype} movies={movies} filter={filter}/>
 	<style jsx>
 		{`

@@ -1,11 +1,11 @@
-import { graphMaxVals,  IMovie, movieId } from "@/util/types"
+import { graphMaxVals,  IMovie, movieState } from "@/util/types"
 import GraphSelectionContainer from "../GraphSelectionContainer"
 import BarGraphMovieItem from "../movieItems/BarGraphMovieItem"
 import GridMovieItem from "../movieItems/GridMovieItem"
 import { Chart ,ChartTypes} from "charts-css-react"
 
 type Props={
-    list:movieId[]
+    list:movieState[]
     movies:Map<string,IMovie>
     maxvals:graphMaxVals
 }

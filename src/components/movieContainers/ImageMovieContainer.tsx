@@ -2,11 +2,11 @@ import { NextComponentType, NextPage } from "next"
 import { AppProps } from "next/app"
 import React, { ReactElement } from "react"
 import { ViewType } from "@/util/enum"
-import {  IMovie, movieId } from "@/util/types"
+import {  IMovie, movieState } from "@/util/types"
 import ImageMovieItem from "../movieItems/ImageMovieItem"
 
 type Props={
-    list:movieId[]
+    list:movieState[]
     movies:Map<string,IMovie>
 }
 export default function ImageMovieConatiner({list,movies}:Props) {
