@@ -23,10 +23,8 @@ export default function GridMovieItem({movie,state}:Props) {
             <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0`}>
           <div className="col-md-4">
-            <LazyLoad>
-            <img src={movie.image} alt="poster"
-			            width={100} height={150}/>
-            </LazyLoad>
+            <img className="poster" src={movie.image} alt="poster"
+			            />
           </div>
           <div className="col-md-8">
             <div className="card-body">
@@ -65,6 +63,10 @@ export default function GridMovieItem({movie,state}:Props) {
         // </Link></div>
         ):""}
         <style jsx>{`
+            .poster{
+                width:100px;
+                height:150px;
+            }
             .item{
                 position:relative;
                 margin:3px;

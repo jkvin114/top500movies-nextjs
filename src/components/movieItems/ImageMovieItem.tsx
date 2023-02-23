@@ -17,18 +17,19 @@ export default function ImageMovieItem({movie,state,rank}:Props) {
         {movie?(<div className={`item col card ${state===1&&"active bg-secondary"} ${state===2&&"inactive"}`}>
         <span className="badge bg-warning rounded-pill">{rank}</span>
             < Link href={`/detail/`+movie.id} >
-                <LazyLoad>
                     
             <img src={movie.image} alt="poster"
-                className="rounded"
-			    width={200} height={300}/>
-                </LazyLoad>
+                className="rounded poster"/>
             </Link>
             <div className="card-body">
                 <h5 onClick={onclick} className="card-title">{movie.title}</h5>
    
             </div>
                 <style jsx>{`
+                    .poster{
+                        width:200px;
+                        height:300px;
+                    }
 				.item {
                     margin:7px;
                     box-shadow:3px;
