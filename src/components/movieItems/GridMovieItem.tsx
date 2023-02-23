@@ -1,8 +1,7 @@
 import {  IMovie, movieState } from "@/util/types"
-import Link from "next/link"
-import Image from "next/image"
 import { num2USD } from "@/util/util"
 import { SortType } from "@/util/enum"
+import LazyLoad from 'react-lazyload';
 
 type Props={
     movie:IMovie|undefined
@@ -24,8 +23,10 @@ export default function GridMovieItem({movie,state}:Props) {
             <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0`}>
           <div className="col-md-4">
-          <Image src={movie.image} alt="poster"
+            <LazyLoad>
+            <img src={movie.image} alt="poster"
 			            width={100} height={150}/>
+            </LazyLoad>
           </div>
           <div className="col-md-8">
             <div className="card-body">
