@@ -1,5 +1,5 @@
 
-FROM node:latest as base
+FROM node:18-alpine as base
 WORKDIR /src
 #COPY ["package.json", "package-lock.json*", "./"]
 COPY package*.json ./

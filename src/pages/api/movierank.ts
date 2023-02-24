@@ -14,6 +14,7 @@ export default async function handler(
   let limit=req.query.limit
   if(!limit || Number.isNaN(Number(limit))) limit="200"
   if(method==="GET"){
+    console.log("movierank")
     const client = await clientPromise;
     const db = client.db("AllTimeMovieData");
 

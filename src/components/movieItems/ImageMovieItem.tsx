@@ -2,7 +2,6 @@ import { IMovie } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import "./../../styles/Home.module.css"
-import LazyLoad from "react-lazyload"
 type Props={
     movie:IMovie|undefined
     state:number
@@ -16,31 +15,44 @@ export default function ImageMovieItem({movie,state,rank}:Props) {
     return (<>
         {movie?(<div className={`item col card ${state===1&&"active bg-secondary"} ${state===2&&"inactive"}`}>
         <span className="badge bg-warning rounded-pill">{rank}</span>
-            < Link href={`/detail/`+movie.id} >
+        <div className='poster-link '>
+
+            < Link href={`/detail/`+movie.id}>
                     
-            <img src={movie.image} alt="poster"
-                className="rounded poster"/>
+                    <img src={movie.image} alt="poster"
+                        className="rounded poster d-sm-none d-md-block d-none"/>
+                    <img src={movie.image} alt="poster"
+                        className="rounded poster-small d-sm-block d-md-none"/>
             </Link>
+        </div>
             <div className="card-body">
                 <h5 onClick={onclick} className="card-title">{movie.title}</h5>
    
             </div>
                 <style jsx>{`
+                    .poster-link{
+                        width: fit-content;
+                    }
                     .poster{
                         width:200px;
                         height:300px;
                     }
+                    .poster-small{
+                        
+                        width:140px;
+                        height:210px;
+                    }
 				.item {
-                    margin:7px;
-                    box-shadow:3px;
+                    width:min-content;
                     overflow:hidden;
                     border:none;
                     position:relative;
-                    padding-top:7px;
+                    padding-top:5px;
 				}
                 .card-title{
                     cursor:pointer;
                     font-weight:bold;
+                    font-size:16px;
                     color:whitesmoke;
                 }
                 .card-title:hover{

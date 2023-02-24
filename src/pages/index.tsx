@@ -19,12 +19,12 @@ export default function Home() {
 		});
 		///api/movierank?limit=200
 		//https://imdb-api.com/en/API/BoxOfficeAllTime/k_104ms4wr
-		fetch("/api/movierank?limit=200").then(async (res) => {
-			const data = await res.json()
+		// fetch("/api/movierank?limit=200").then(async (res) => {
+		// 	const data = await res.json()
 	  
-			setRanks(data.data
-			.map((rk:IRank)=>rk.id));
-		  });
+		// 	setRanks(data.data
+		// 	.map((rk:IRank)=>rk.id));
+		//   });
 	  },[updated]
   )
   useEffect(()=>{

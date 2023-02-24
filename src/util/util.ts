@@ -39,7 +39,7 @@ export function summarizeUSD(num:number):string{
 	return "$" + String(roundToNearest(num/(1000*1000*1000),-2))+"B"
 }
 export function extractNumber(str: string) {
-	let s = str.match(/([0-9]+)/g)?.join("")
+	let s = str.match(/([0-9.]+)/g)?.join("")
 	if (!s) return -1
 	return Number(s)
 }
@@ -137,7 +137,7 @@ export class Filter {
 			case SortType.PROFIT_INC:
 			case SortType.PROFIT:
 				let budget=extractNumber(String(movie.budget))
-				if(budget===-1 || movie.worldwideGross===0) break
+				if(budget===-1 || movie.worldwideGross===0 || String(movie.budget).charAt(0)!=="$") break
 				data[1]="Profit: "+ toPercent(movie.worldwideGross / budget)
 				break
 		}
@@ -192,7 +192,7 @@ export class Filter {
 				mul=-1
 			case SortType.PROFIT:
 				let budget=extractNumber(String(movie.budget))
-				if(budget===-1 || movie.worldwideGross===0) prop=-1*mul
+				if(budget===-1 || movie.worldwideGross===0 || String(movie.budget).charAt(0)!=="$") prop=-1*mul
 				else prop = movie.worldwideGross / budget
 				break
 		}

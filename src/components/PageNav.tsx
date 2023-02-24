@@ -22,7 +22,7 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
             <ul className="pagination">{
                 (<li className="page-item">
                     <Link className="page-link"
-                        scroll={false}
+                        scroll={true}
                         href={{
                             pathname: "/",
                             query: { ...router.query, page:1, pagesize: currPageSize },
@@ -36,7 +36,7 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
                 <li className="page-item">
                     {" "}
                     <Link className="page-link"
-                    scroll={false}
+                    scroll={true}
                         href={{
                             pathname: "/",
                             query: { ...router.query, page: Math.max(1, currPage - 1), pagesize: currPageSize },
@@ -50,7 +50,7 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
                     [...Array(Math.ceil(totalLength / currPageSize)+1)].map((e, i) =>(
                         
                     (i>0 && i>Math.floor((currPage-1)/5)*5 && i<=Math.ceil((currPage)/5)*5)&&(<li key={i} className={"page-item "+(currPage==i&&"active")}>
-                        <Link className="page-link" scroll={false} href={{
+                        <Link className="page-link" scroll={true} href={{
                             pathname: "/",
                             query: {
                                 ...router.query,
@@ -63,7 +63,7 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
                 }
                 <li className="page-item">
                     <Link
-                        className="page-link" scroll={false}
+                        className="page-link" scroll={true}
                         href={{
                             pathname: "/",
                             query: {

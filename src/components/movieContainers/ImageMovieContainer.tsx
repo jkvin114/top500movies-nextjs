@@ -15,6 +15,8 @@ export default function ImageMovieConatiner({list,movies}:Props) {
     </div>
     
     </div><style jsx>{`
-				
+				.row{
+                    justify-content: center;
+                }
 			`}</style></>)
 }
