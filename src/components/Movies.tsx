@@ -38,6 +38,10 @@ export default function Movies({allTimeRanks,movies}:Props) {
 		case "bar_graph":
 			setViewType(ViewType.BAR_GRAPH)
 			break
+		case "rating":
+			console.log("rating")
+			setViewType(ViewType.RATING)
+			break
 	}
   }, [view]);
 

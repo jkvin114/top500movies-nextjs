@@ -1,5 +1,6 @@
 import { SortType, sortTypeStr } from "@/util/enum";
 import { Filter } from "@/util/util";
+import { useRouter } from "next/router";
 
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 type Props={
@@ -8,12 +9,16 @@ type Props={
 }
 export function SortSelection({setFilter,oldFilter}:Props){
     const [sortType,setSortType]=useState<string>("Worldwide Gross")
-
+    const router=useRouter()
     
     function changeSort(event:FormEvent<HTMLSelectElement>){
         setSortType(event.currentTarget.value)
         let filter=oldFilter.clone().setSort1(event.currentTarget.value as SortType,-1)
         setFilter(filter)
+        router.push({
+            pathname: '/',
+            query: {...router.query, page:1 }
+          },undefined, { shallow: true })
     }
 
     return (<><div className=" filter-item">

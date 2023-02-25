@@ -9,6 +9,7 @@ import { useRouter } from "next/router"
 import BarGraphConatiner from "./movieContainers/BarGraphMovieContainer"
 import { Filter, getMaxVal } from "@/util/util"
 import PageNav from "./PageNav"
+import RatingConatiner from "./movieContainers/RatingMovieContainer"
 type Props = {
 	viewType: ViewType
 	allTimeRanks: string[]
@@ -30,7 +31,6 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 		let maxww = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.worldwideGross)
 		let maxdm = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.domesticGross)
 		let maxruntime = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.runtimeMins)
-
 		setMaxvals({ ...maxvals, wwgross: maxww, dmgross: maxdm, runtime: maxruntime })
 		return sorted
 	}
@@ -60,6 +60,8 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 				{viewType === ViewType.LIST && <ListMovieContainer list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.GRID && <GridMovieConatiner list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.BAR_GRAPH && <BarGraphConatiner list={slicedList} movies={movieMap} maxvals={maxvals} />}
+				{viewType === ViewType.RATING && <RatingConatiner list={slicedList} movies={movieMap}/>}
+
 				<PageNav currPage={currPage} currPageSize={currPageSize} totalLength={sortedList.length}/>
 
 			</div>

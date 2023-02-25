@@ -19,14 +19,12 @@ export default function ViewSelectionContainer(){
 
 		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "list"} }}>
 			<Image src="/list.svg" alt="list" width={30} height={30} />
-            {/* <text className="d-none d-sm-inline">List</text> */}
 		</Link>
         </div>
         <div  className={`viewtype-item view-nav ${(view!=="grid"? "inactive":" bg-secondary")}`}>
 
 		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "grid"} }} >
 			<Image src="/grid.svg" alt="grid"  width={30} height={30}/>
-            {/* <text className="d-none d-sm-inline">Grid</text> */}
 		</Link>
         </div>
 
@@ -34,10 +32,14 @@ export default function ViewSelectionContainer(){
 
 		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "bar_graph"} }} >
 			<Image src="/chart_white.svg" alt="bar_graph" width={30} height={30}/>
-            {/* <text className="d-none d-sm-inline"  >Graph</text> */}
 		</Link>
         </div>
-        
+        <div  className={`viewtype-item view-nav ${(view!=="rating"? "inactive":" bg-secondary")}`}>
+
+		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "rating"} }} >
+			<Image src="/star.svg" alt="rating" width={30} height={30}/>
+		</Link>
+        </div>
     </div>
     <style jsx>
         {`

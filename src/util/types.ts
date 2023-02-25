@@ -18,7 +18,11 @@ type IMovie = {
     domesticGross:number,
     domesticOpening:number,
     contentRating:string,
-    countries:string
+    countries:string,
+    rtScore:string,
+    rtState:string,
+    rtAudienceScore:string,
+    rtAudienceState:string,
 }
 type IRank = {
     id: string,

@@ -84,7 +84,7 @@ export class Filter {
 	}
 	setSort1(s: SortType, type: number) {
 		this.sort1 = s
-		this.sort1Type = type
+		this.sort1Type = -1
 		return this
 	}
 
@@ -125,6 +125,16 @@ export class Filter {
 				if(!movie.metacriticRating) break
 				data[1]="Metacritic Rating: "+movie.metacriticRating
 				break
+			case SortType.RATING_RT_AUDIENCE:
+			case SortType.RATING_RT_AUDIENCE_INC:
+				if(!movie.rtAudienceScore || movie.rtAudienceScore==="") break
+				data[1]="RT audience: "+movie.rtAudienceScore+"%"
+				break
+			case SortType.RATING_RT_INC:
+			case SortType.RATING_RT:
+				if(!movie.rtScore || movie.rtScore==="") break
+				data[1]="RT tomatometer: "+movie.rtScore+"%"
+				break
 			case SortType.RUNNING_TIME_INC:
 			case SortType.RUNNING_TIME:
 				data[1]="Runtime: "+movie.runtimeMins+" mins"
@@ -144,6 +154,13 @@ export class Filter {
 		if(!data[1] || data[1]==="null") data[1]=null
 		return data
 	}
+	private pushback(mul:number){
+		return -Infinity
+	}
+	private isValidCurrency(str:string|number){
+		str=String(str)
+		return !(str.charAt(0)!=="£"&&str.charAt(0)!=="$")
+	}
 	private getSorterProp(movie: IMovie) {
 		let prop: string | number = 0
 		let mul=1
@@ -151,7 +168,7 @@ export class Filter {
 			case SortType.BUDGET:
 				prop = movie.budget
 				let b=extractNumber(String(movie.budget))
-				if(b===-1 || movie.budget[0]!=="$") prop=-1*mul
+				if(b===-1 || !this.isValidCurrency(movie.budget)) return this.pushback(mul)
 				break
 			case SortType.WW_GROSS:
 				prop = movie.worldwideGross
@@ -162,42 +179,63 @@ export class Filter {
 			case SortType.INTL_GROSS:
 				prop = movie.worldwideGross - movie.domesticGross
 				break
+			//=======================================================
 			case SortType.RELEASE_OLD:
 				mul=-1
 			case SortType.RELEASE:
 				prop = movie.releaseDate
 				break
+			//=======================================================
 			case SortType.RATING_IMDB_INC:
 				mul=-1
 			case SortType.RATING_IMDB:
 				prop = movie.imDbRating
 				break
+			//=======================================================
 			case SortType.RATING_META_INC:
 				mul=-1
 			case SortType.RATING_META:
+				if(!movie.metacriticRating) return this.pushback(mul)
 				prop = movie.metacriticRating
-
 				break
+			//=======================================================
+			case SortType.RATING_RT_INC:
+				mul=-1
+			case SortType.RATING_RT:
+				prop = movie.rtScore
+				break
+			//=======================================================
+			case SortType.RATING_RT_AUDIENCE_INC:
+				mul=-1
+			case SortType.RATING_RT_AUDIENCE:
+				prop = movie.rtAudienceScore
+				break
+			//=======================================================
 			case SortType.RUNNING_TIME_INC:
 				mul=-1
 			case SortType.RUNNING_TIME:
 				prop = movie.runtimeMins
 				break
+				
+			//=======================================================
 			case SortType.DM_GROSS_RATIO_INC:
 				mul=-1
 			case SortType.DM_GROSS_RATIO:
 				prop = movie.domesticGross / movie.worldwideGross
 				break
+			//=======================================================
 			case SortType.PROFIT_INC:
 				mul=-1
 			case SortType.PROFIT:
 				let budget=extractNumber(String(movie.budget))
-				if(budget===-1 || movie.worldwideGross===0 || String(movie.budget).charAt(0)!=="$") prop=-1*mul
+				if(budget===-1 || movie.worldwideGross===0 || !this.isValidCurrency(movie.budget)) return this.pushback(mul)
 				else prop = movie.worldwideGross / budget
 				break
 		}
+		if(prop===0 || prop==="" || !prop) return this.pushback(mul)
+
 		if (typeof prop === "string") return extractNumber(prop) * mul
-		else return prop * mul
+		else return prop*mul
 	}
 	getSorter(): MovieSorter {
 		return (m1: IMovie, m2: IMovie) => {
@@ -208,6 +246,9 @@ export class Filter {
 			}
 			if (p2 === -1) {
 				return -1
+			}
+			if(p2 === p1){
+				return m2.worldwideGross-m1.worldwideGross
 			}
 			return this.sort1Type < 0 ? p2 - p1 : p1 - p2
 			
