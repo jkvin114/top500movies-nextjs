@@ -1,5 +1,5 @@
 ## Deployment
-[http://ec2-34-202-98-227.compute-1.amazonaws.com:3000](http://ec2-34-202-98-227.compute-1.amazonaws.com:3000/)
+[http://ec2-34-202-98-227.compute-1.amazonaws.com?top500movies=true](http://ec2-34-202-98-227.compute-1.amazonaws.com?top500movies=true)
 
 ## Tech Stacks
 - Next.js
