@@ -22,13 +22,13 @@ const nextConfig = {
   
   },
  reactStrictMode: true,
- async redirects(){
-  return[{
-    source:"/home",
-    destination:"/",
-    permanent:false
-  }]
-  }
+//  async redirects(){
+//   return[{
+//     source:"/detail",
+//     destination:"/",
+//     permanent:false
+//   }]
+//   }
 }
 
 module.exports = nextConfig

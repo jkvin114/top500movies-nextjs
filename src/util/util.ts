@@ -1,6 +1,10 @@
 import { FilterType, FilterViewType, SortType, STATE } from "./enum"
 import { IMovie, MovieFilter,  movieState, MovieSorter } from "./types"
 
+export const list2str=function(list:string[]){
+	return list.reduce((prev, curr, i) => prev + (i === 0 ? "" : ", ") + curr, "")
+}
+
 export const roundToNearest=function(num:number,digit?:number){
 	if(!digit) digit=0
 
@@ -125,7 +129,7 @@ export class Filter {
 				break
 			case SortType.RATING_IMDB_INC:
 			case SortType.RATING_IMDB:
-				data[1]="ImDB Rating: "+movie.imDbRating
+				data[1]="IMDb Rating: "+movie.imDbRating
 				break
 			case SortType.RATING_META_INC:
 			case SortType.RATING_META:

@@ -40,6 +40,10 @@ export function SortSelection({setFilter,oldFilter}:Props){
         {`
             .filter-item{
                 display:inline-block;
+                max-width:unset;
+            }
+            .filter-item{
+                
             }
         `}</style></>)
 }

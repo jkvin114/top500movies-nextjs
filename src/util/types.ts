@@ -23,6 +23,7 @@ type IMovie = {
     rtState:string,
     rtAudienceScore:string,
     rtAudienceState:string,
+    
 }
 type IRank = {
     id: string,

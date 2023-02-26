@@ -10,10 +10,9 @@ import ViewSelectionContainer from "./ViewSelectionContainer";
 import { Filter } from "@/util/util";
 import { SortSelection } from "./SortSelectionContainer";
 type Props={
-    allTimeRanks:string[],
     movies:IMovie[]
 }
-export default function Movies({allTimeRanks,movies}:Props) {
+export default function Movies({movies}:Props) {
 
     const [viewtype, setViewType] = useState<ViewType>(ViewType.LIST);
   
@@ -106,9 +105,13 @@ export default function Movies({allTimeRanks,movies}:Props) {
 	const companies= useMemo(() => getCompanies(movies), [movies])
     return <>
 	<FilterContainer directors={directors} actors={actors} companies={companies} setFilter={setFilter} oldFilter={filter}/>
+	<div className="container">
+
     <ViewSelectionContainer/>
 	<SortSelection setFilter={setFilter}  oldFilter={filter}/>
-    <MovieContainer allTimeRanks={allTimeRanks} viewType={viewtype} movies={movies} filter={filter}/>
+
+	</div>
+    <MovieContainer viewType={viewtype} movies={movies} filter={filter}/>
 	<style jsx>
 		{`
 		`}

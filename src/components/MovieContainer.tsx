@@ -12,7 +12,6 @@ import PageNav from "./PageNav"
 import RatingConatiner from "./movieContainers/RatingMovieContainer"
 type Props = {
 	viewType: ViewType
-	allTimeRanks: string[]
 	movies: IMovie[]
     filter:Filter
 }
@@ -62,7 +61,7 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 	const slicedList = sortedList.slice((currPage - 1) * currPageSize, currPage * currPageSize)
 	return (
 		<>
-			<div className="movie-container">
+			<div className="movie-container container">
                 <h5><b>{((currPage - 1) * currPageSize+1)+"-"+Math.min(sortedList.length,(currPage) * currPageSize )+"/"+sortedList.length}</b> Movies</h5>
                 {/* <h5>Sorted by {filter.sort1}</h5> */}
 				{viewType === ViewType.IMAGE && <ImageMovieConatiner list={slicedList} movies={movieMap} />}

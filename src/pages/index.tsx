@@ -1,37 +1,66 @@
 import Head from "next/head"
-import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { IMovie, IRank } from "@/util/types";
-import Movies from "@/components/Movies";
-import { useRouter } from "next/router";
-
+import { useState, useEffect, useCallback, MouseEventHandler } from "react"
+import Link from "next/link"
+import { IMovie, IRank } from "@/util/types"
+import Movies from "@/components/Movies"
+import { useRouter } from "next/router"
+import ReactModal from "react-modal"
+import MovieDetail from "@/components/MovieDetail"
 export default function Home() {
-  const [list, setList] = useState<IMovie[]>([]);
-  const [ranks, setRanks] = useState<string[]>([]);
-  const [updated, setUpdated] = useState<boolean>(true);
-  const getData =useCallback(
-	() => {
-		if(list.length>0) return
+	const [list, setList] = useState<IMovie[]>([])
+	const [isModalOpen, setModalOpen] = useState<boolean>(false)
+
+	const getData = useCallback(() => {
+		if (list.length > 0) return
 		fetch("/api/movie").then(async (res) => {
-		  const data = await res.json()
-	
-		  setList(data.data);
-		});
+			const data = await res.json()
+
+			setList(data.data)
+		})
 		///api/movierank?limit=200
 		//https://imdb-api.com/en/API/BoxOfficeAllTime/k_104ms4wr
 		// fetch("/api/movierank?limit=200").then(async (res) => {
 		// 	const data = await res.json()
-	  
+
 		// 	setRanks(data.data
 		// 	.map((rk:IRank)=>rk.id));
 		//   });
-	  },[updated]
-  )
-  useEffect(()=>{
-	getData();
-  },[])
-  const router=useRouter()
-  const path=router.pathname
+	}, [])
+	useEffect(() => {
+		getData()
+	}, [])
+
+	function onModalOpen() {
+		document.body.style.overflow = "hidden"
+	}
+	function onModalClose() {
+		document.body.style.overflow = "auto"
+		//preserve query exxept for movieid
+		delete router.query.movieId
+		const params = new URLSearchParams({ ...(router.query as any) })
+		router.push("/?" + params.toString(), undefined, { scroll: false })
+	}
+	const modalStyles = {
+		content: {
+			top: "5%",
+			left: "5%",
+			right: "5%",
+			bottom: "5%",
+			zIndex:99,
+			background:"#343A40"
+		},
+	}
+
+	const router = useRouter()
+	const path = router.pathname
+	const { movieId } = router.query
+	useEffect(() => {
+		console.log(path)
+	}, [path, movieId])
+
+	function onCloseModal(){
+		onModalClose()
+	}
 	return (
 		<>
 			<Head>
@@ -40,23 +69,35 @@ export default function Home() {
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/rt-audience-upright.png" />
 			</Head>
-			<Link href={"/home"} className="underline">
-			home
-			</Link>
-			<button className="btn btn-primary m-3">Button Primary</button>
 			<div className="text-body bg-body">
-				<Movies allTimeRanks={ranks}  movies={list}/>
+				<Movies movies={list} />
 			</div>
-			<footer>
-				
-			</footer>
+			{typeof movieId === "string" && (
+				<ReactModal
+					isOpen={!!router.query.movieId}
+					onAfterOpen={onModalOpen}
+					onRequestClose={onModalClose}
+					contentLabel="Example Modal"
+					style={modalStyles}
+				>
+					<MovieDetail id={movieId} onClose={onCloseModal}></MovieDetail>
+				</ReactModal>
+			)}
+			<footer></footer>
+			<style jsx>
+				{`
+					.modal {
+						z-index: 100;
+					}
+				`}
+			</style>
 		</>
 	)
 }
-export async function getServerSideProps(){
+export async function getServerSideProps() {
 	return {
-		props:{
-			result:"result"
-		}
+		props: {
+			result: "result",
+		},
 	}
 }

@@ -134,10 +134,11 @@ a {
 .filter-item{
   margin:6px 10px;
   max-width: 320px;
+  padding:5px;
 }
 .filter-content{
   display:flex;
-  justify-content:center;
+  justify-content: flex-start;
   align-items:center;
   flex-wrap:wrap;
 }
@@ -168,4 +169,13 @@ footer
 
 .grayscale{
   filter: grayscale(1);
+}
+a{ color: inherit !important;
+  text-decoration: none !important; 
+}
+.active>.page-link, .page-link.active{
+  z-index: inherit !important;
+}
+.list-group-item-action:focus, .list-group-item-action:hover {
+  z-index: inherit !important;
 }

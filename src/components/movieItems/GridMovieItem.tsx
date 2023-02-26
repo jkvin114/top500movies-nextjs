@@ -1,6 +1,8 @@
 import {  IMovie, movieState } from "@/util/types"
 import { num2USD } from "@/util/util"
 import { SortType } from "@/util/enum"
+import Link from "next/link"
+import { useRouter } from "next/router"
 
 type Props={
     movie:IMovie|undefined
@@ -15,10 +17,17 @@ export default function GridMovieItem({movie,state}:Props) {
         if(state.extraType==null) return false
         return ![SortType.WW_GROSS,SortType.RELEASE,SortType.RELEASE_OLD,SortType.RUNNING_TIME,SortType.RUNNING_TIME_INC,
         ].includes(state.extraType)
-    }
+    }    
+    const router=useRouter()
+
     return (<>
         {movie?(
-        <div onClick={onclick} className={`item ${state.state===0&&"bg-body-secondary "} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
+            <Link as={`/detail/`+movie?.id}
+            href={{
+            pathname: `/`,
+            query: { ...router.query ,movieId:movie?.id},
+        }} shallow={true} scroll={false}>
+        <div className={`item ${state.state===0&&"bg-none border-0"} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
             <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0`}>
           <div className="col-4">
@@ -42,7 +51,7 @@ export default function GridMovieItem({movie,state}:Props) {
                 <div className="card-text"><small className="text-muted">{(state.extraData!=null&& needExtra())&&state.extraData} </small></div>
             </div>
         </div>
-      </div>
+      </div></Link>
         // <div className={`item ${active?"active":"inactive"}`}><Link href={`/detail/`+movie.id}>
         //     <div>
         //         <div className="title">{movie.title}</div>
@@ -63,15 +72,15 @@ export default function GridMovieItem({movie,state}:Props) {
         ):""}
         <style jsx>{`
             .poster{
-                width:100px;
-                height:150px;
+                width:80px;
+                height:120px;
             }
             .item{
                 position:relative;
                 margin:3px;
                 padding:5px;
                 display:block;
-                width:300px;
+                width:260px;
                 cursor:pointer;
             } .item.inactive{
                 filter:brightness(0.7);

@@ -1,3 +1,20 @@
+## Deployment
+[http://ec2-34-202-98-227.compute-1.amazonaws.com:3000](http://ec2-34-202-98-227.compute-1.amazonaws.com:3000/)
+
+## Tech Stacks
+- Next.js
+- React.js
+- Bootstrap 5
+- Typescript
+- MongoDB
+
+## Movie APIs
+- [TheMovieDB](https://www.themoviedb.org/)
+- [IMDb API](https://imdb-api.com/)
+
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -14,16 +31,9 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 ## Docker setup
 
 ```bash
-docker build top500movies
-docker run -d -p 3333:3000 top500movies
+docker build [path] -t [imagename]
+docker run -d -p 3000:3000 --name [containername] [imagename]
 ```

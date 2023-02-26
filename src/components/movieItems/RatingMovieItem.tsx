@@ -2,6 +2,9 @@ import {  IMovie, movieState } from "@/util/types"
 import { num2USD } from "@/util/util"
 import { SortType } from "@/util/enum"
 import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import Ratings from "./Ratings"
 type Props={
     movie:IMovie|undefined
     state:movieState
@@ -17,129 +20,44 @@ export default function RatingMovieItem({movie,state}:Props) {
             ,SortType.RATING_RT_INC,SortType.RATING_RT,SortType.RATING_RT_AUDIENCE,SortType.RATING_RT_AUDIENCE_INC]
             .includes(state.extraType)
     }
-    function getValue(str:string|number|undefined):number{
-        if(str==="" || !str) return -1
-        return Number(str)
-    }
-    const meta=getValue(movie?.metacriticRating)
-    const imdb=getValue(movie?.imDbRating)
-    const tomato=getValue(movie?.rtScore)
-    const tomato_aud=getValue(movie?.rtAudienceScore)
+    
+    const router=useRouter()
     return (<>
-        {movie?(
-        <div onClick={onclick} className={`item ${state.state===0&&"bg-body-secondary "} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
+        <Link as={`/detail/`+movie?.id}
+            href={{
+            pathname: `/`,
+            query: { ...router.query ,movieId:movie?.id},
+        }} shallow={true} scroll={false}>
+        <div className={`item ${state.state===0&&"bg-body-secondary border-0"} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
             <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0 header`}>
             <div className="card-body">
-                <h6 className="card-subtitle movie-title">{movie.title}</h6>
+                <h6 className="card-subtitle movie-title">{movie?.title}</h6>
                 <div className="card-text">
-                    <small className="text-muted">{movie.releaseDate} </small>
-                    <div className="card-text"><small className="text-muted">{(state.extraData!=null&& needExtra())&&state.extraData} </small></div>
+                    <small className="text-muted">{movie?.releaseDate} <small className="text-muted">{(state.extraData!=null&& needExtra())&&state.extraData} </small></small>
+                    {/* <div className="card-text"></div> */}
                 </div>
             </div>
         </div>
-        <div className="row">
-                <div className="rating col">
-                     {/* <Image title="metacritic score" className="icon" src="/metacritic.svg" alt="metacritic" width={30} height={30} /> */}
-                     <span title="metacritic score"  className={`metascore ${(meta<0)&& "gray"} 
-                     ${(meta>=0 && meta <=40)&& "red"} 
-                     ${(meta>40 && meta <=60)&& "yellow"} 
-                     `}>{meta===-1?"-":meta} </span>
-                </div>
-                <div className="rating col-2">
-                    <Image title="ImDB rating" className="icon" src="/star.png" alt="metacritic" width={25} height={25} />
-                    <b title="ImDB rating" className="imdbscore">{imdb===-1?"N/A":imdb} </b>
-                </div>
-                <div className="rating col">
-                    {(movie.rtState===""||!movie.rtState) 
-                    && ( <> <Image title="Tomatometer" className="icon grayscale" src="/rt-fresh.png" alt="Tomatometer" width={35} height={35} />
-                        <b title="Tomatometer" className="rottentomato"> - </b></>)
-                    }
-                    {(movie.rtState==="rotten") 
-                    && ( <> <Image title="Tomatometer" className="icon" src="/rt-rotten.png" alt="Tomatometer" width={35} height={35} />
-                        <b title="Tomatometer" className="rottentomato">{tomato}%</b></>)
-                    }
-                    {(movie.rtState==="fresh") 
-                    && ( <> <Image title="Tomatometer" className="icon" src="/rt-fresh.png" alt="Tomatometer" width={35} height={35} />
-                        <b title="Tomatometer" className="rottentomato">{tomato}%</b></>)
-                    }
-                    {(movie.rtState==="certified-fresh") 
-                    && ( <> <Image title="Tomatometer" className="icon" src="/rt-certified-fresh.png" alt="Tomatometer" width={35} height={35} />
-                        <b title="Tomatometer" className="rottentomato">{tomato}%</b></>)
-                    }
 
-                </div>
-                <div className="rating col">
-                    {(movie.rtAudienceState===""||!movie.rtAudienceState) 
-                        && ( <> <Image title="RT audience" className="icon grayscale" src="/rt-audience-upright.png" alt="Tomatometer" width={25} height={35} />
-                            <b title="RT audience" className="rottentomato"> - </b></>)
-                        }
-                        {(movie.rtAudienceState==="spilled") 
-                        && ( <> <Image title="RT audience" className="icon" src="/rt-audience-spilled.png" alt="Tomatometer" width={35} height={25} />
-                            <b title="RT audience" className="rottentomato">{tomato_aud}%</b></>)
-                        }
-                        {(movie.rtAudienceState==="upright") 
-                        && ( <> <Image title="RT audience" className="icon" src="/rt-audience-upright.png" alt="Tomatometer" width={25} height={35} />
-                            <b title="RT audience" className="rottentomato">{tomato_aud}%</b></>)
-                        }
-                </div>
-        </div>
-      </div>
-        ):""}
+        <Ratings movie={movie}/>
+
+
+      </div></Link>
         <style jsx>{`
-            .rottentomato{
-                margin-left:4px;
-                font-size:18px;
-                color:whitesmoke;
-            }
-            .imdbscore{
-                margin-left:4px;
-                vertical-align: middle;
-                color:whitesmoke;
-                font-size:17px;
-
+            .card-body{
+                padding-bottom:4px;
             }
             .header{
-                min-height:70px;
-            }
-            .metascore{
-                margin-left:4px;
-                display: inline-block;
-                color:white;
-                background:#66CC33;
-                font-weight:bold;
-                width:35px;
-                height:35px;
-                border-radius:4px;
-                line-height:35px;
-                text-align:center;
-            }
-            .metascore.gray{
-                background:#AAAAAA;
-            }
-            .metascore.red{
-                background:red;
-            }
-            .metascore.yellow{
-                background:#FFCC33;
-            }
-            .icon{
-                display:inline;
-            }
-            .rating{
-                padding:6px;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                min-height:50px;
+                min-height:80px;
                 text-align:center;
             }
             .item{
+                margin:6px;
                 position:relative;
-                margin:3px;
                 padding:5px;
                 display:block;
-                width:350px;
+                width:300px;
                 cursor:pointer;
                 {/* flex-grow:1; */}
             } .item.inactive{

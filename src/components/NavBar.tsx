@@ -3,51 +3,43 @@ import { AppProps } from "next/app"
 import React, { ReactElement, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/router"
 
 export default function NavBar() {
-   
+    const router=useRouter()
     return (<>
-        <nav className="navbar bg-dark navbar-expand-lg bg-body-tertiary">
+        <nav className="navbar bg-dark navbar-expand-lg bg-body-tertiary justify-content-between">
             <div className="container-fluid">
-            <a className="navbar-brand" href="#">Top500Movies</a>
+
+            <Link className="navbar-brand"
+            href={{
+            pathname: `/`,
+            query: { ...router.query,movieId:""},
+                }} shallow={true} scroll={false}>
+           TOP500Movies</Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav">
-                    <li className="nav-item">
+                    {/*  <Image src="/rt-audience-upright.png" alt="" width={24} height={30}/><li className="nav-item">
                         <Link href="#" className="nav-link active" aria-current="page" >
                         Home
-                        </Link>
+                        </Link> 
                     </li>
                     <li className="nav-item">
-                    <Link href="#" className="nav-link" >
-                        2
+                    <Link href="/tech" className="nav-link" >
+                        Dev
                     </Link>
-                    </li>
-                    <li className="nav-item">
+                    </li> */}
+                    <li className="nav-item btn-nav">
                         <Link href={"https://github.com/jkvin114/top200movies-nextjs"}>
-                        <Image src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Github" width={30} height={24}/>
+                        <Image src="/github.png" alt="Github" width={35} height={35}/>Github
                         </Link>
                     </li>
-                    {/* <li className="nav-item">
-                    <a className="nav-link disabled">Disabled</a>
-                    </li> */}
                 </ul>
             </div>
         </div>
     </nav>
-        <style jsx>
-            {`
-                nav{
-                    position:fixed;
-                    top:0;
-                    width:100%;
-                    z-index:10;
-                }
-            `}
-
-        </style>
-            
     </>)
 }

@@ -2,6 +2,7 @@ import { IMovie } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import "./../../styles/Home.module.css"
+import { useRouter } from "next/router"
 type Props={
     movie:IMovie|undefined
     state:number
@@ -12,12 +13,17 @@ export default function ImageMovieItem({movie,state,rank}:Props) {
     function onclick(){
         window.location.href=`/detail/`+movie?.id
     }
+    const router=useRouter()
+
     return (<>
         {movie?(<div className={`item col card ${state===1&&"active bg-secondary"} ${state===2&&"inactive"}`}>
         <span className="badge bg-warning rounded-pill">{rank}</span>
         <div className='poster-link '>
-
-            < Link href={`/detail/`+movie.id}>
+        <Link as={`/detail/`+movie?.id}
+            href={{
+            pathname: `/`,
+            query: { ...router.query ,movieId:movie?.id},
+        }} shallow={true} scroll={false}>
                     
                     <img src={movie.image} alt="poster"
                         className="rounded poster d-sm-none d-md-block d-none"/>

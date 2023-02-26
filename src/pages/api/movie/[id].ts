@@ -12,16 +12,29 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { method } = req
-  const { id } = req.query
+  const { id,from } = req.query
   if(method==="GET"){
+    
     const client = await clientPromise;
     const db = client.db("AllTimeMovieData");
+    if(from==="list"){
 
-    // res.status(200).json({ success: true ,data:"hi"+id})
-    // console.log(id)
-    // return
-    const movie = await db.collection("movie").find({}).limit(10).toArray()
-    console.log(movie)
-    res.status(200).json({ success: false ,data:movie})
+    
+      const movie = await db.collection("list").findOne({id:id})
+      if(!movie){
+        res.status(404).json({ success: false,data:null})
+        return
+      } 
+      res.status(200).json({ success: true ,data:movie.tmdb_id})
+    }
+    else if(from==="movies"){
+
+      const movie = await db.collection("movie").findOne({id:id})
+      if(!movie){
+        res.status(404).json({ success: false,data:null})
+        return
+      } 
+      res.status(200).json({ success: true ,data:movie})
+    }
   }
 }
