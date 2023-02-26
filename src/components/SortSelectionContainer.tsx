@@ -25,11 +25,11 @@ export function SortSelection({setFilter,oldFilter}:Props){
 
         <div className="input-group selection">
             <label className="input-group-text" htmlFor="input-sortby">Sort by</label>
-            <select className="form-select" id="input-sortby" name="sortby" onChange={changeSort}>
+            <select className="form-select" id="input-sortby" name="sortby" onChange={changeSort} value={sortType}>
             {
                 sortTypeStr
                 .map((name)=>
-                    (<option value={name} key={name} selected={sortType===name}>{name}</option>)
+                    (<option value={name} key={name} >{name}</option>)
                 )
             }
                 

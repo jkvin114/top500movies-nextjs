@@ -10,9 +10,6 @@ type Props={
 }
 export default function ImageMovieItem({movie,state,rank}:Props) {
     
-    function onclick(){
-        window.location.href=`/detail/`+movie?.id
-    }
     const router=useRouter()
 
     return (<>
@@ -31,8 +28,12 @@ export default function ImageMovieItem({movie,state,rank}:Props) {
                         className="rounded poster-small d-sm-block d-md-none"/>
             </Link>
         </div>
-            <div className="card-body">
-                <h5 onClick={onclick} className="card-title">{movie.title}</h5>
+            <div className="card-body"><Link as={`/detail/`+movie?.id}
+            href={{
+            pathname: `/`,
+            query: { ...router.query ,movieId:movie?.id},
+        }} shallow={true} scroll={false}> <h5 className="card-title">{movie.title}</h5></Link>
+               
    
             </div>
                 <style jsx>{`

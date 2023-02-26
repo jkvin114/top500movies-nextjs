@@ -25,7 +25,7 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 	const router = useRouter()
 	const [yearOption, setYearOption] = useState<string>("in")
 	const [filterViewOption, setFilterViewOption] = useState<string>("hide")
-	const [isPortrait, setPortrait] = useState<boolean>(true)
+	const [isPortrait, setPortrait] = useState<boolean>(false)
 	const [isFilterVisible, setFilterVisibility] = useState<boolean>(false)
 	function onSubmit(event: any) {
 		event.preventDefault()
@@ -70,6 +70,8 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 	}
 	function onreset() {
 		;(document.getElementById("filterform") as any)?.reset()
+		setFilter(new Filter().setSort1(oldFilter.sort1,-1))
+		return
 		router.push(
 			{
 				pathname: "/",
@@ -78,7 +80,6 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 			undefined,
 			{ shallow: true }
 		)
-		setFilter(new Filter().setSort1(oldFilter.sort1,-1))
         toggleFilter()
 	}
 	function changeYearType(event: ChangeEvent<HTMLInputElement>) {
@@ -238,6 +239,7 @@ export default function FilterContainer({ directors, actors, companies, setFilte
                     text-align:center;
                 }
                 .close-filter{
+					float:right;
                     font-size:25px;
                 }
 					.filter-container.portrait {
@@ -264,7 +266,7 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 					}
 					h5 {
 						cursor: pointer;
-						display: inline-block;
+						display: block;
 					}
 				`}
 			</style>
