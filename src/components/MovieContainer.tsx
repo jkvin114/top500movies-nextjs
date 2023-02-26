@@ -7,7 +7,7 @@ import GridMovieConatiner from "./movieContainers/GridMovieContainer"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import BarGraphConatiner from "./movieContainers/BarGraphMovieContainer"
-import { Filter, getMaxVal } from "@/util/util"
+import { extractNumber, Filter, getMaxVal, isValidCurrency } from "@/util/util"
 import PageNav from "./PageNav"
 import RatingConatiner from "./movieContainers/RatingMovieContainer"
 type Props = {
@@ -22,16 +22,25 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 	const [currPageSize, updatePageSize] = useState<number>(10)
 	const [maxvals, setMaxvals] = useState<graphMaxVals>({
 		wwgross: 0,
-		dmgross: 0,
+		budget: 0,
 		runtime: 0,
 	})
 	function sortMovies(movies: IMovie[],filter:Filter): movieState[] {
 		let sorted = filter
 			.run(movies)
-		let maxww = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.worldwideGross)
-		let maxdm = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.domesticGross)
-		let maxruntime = getMaxVal(sorted, (id: movieState) => movieMap.get(id.id)?.runtimeMins)
-		setMaxvals({ ...maxvals, wwgross: maxww, dmgross: maxdm, runtime: maxruntime })
+		let maxww = getMaxVal(sorted, (state: movieState) => movieMap.get(state.id)?.worldwideGross)
+		let maxbudget = getMaxVal(sorted, (state: movieState) => {
+					const movie=movieMap.get(state.id)
+					if(!movie || extractNumber(movie.budget)===-1) return -1
+
+                    if(isValidCurrency(movie.budget)){
+                        return extractNumber(movie.budget)
+                    }
+					return -1
+		})
+		let maxruntime = getMaxVal(sorted, (state: movieState) => movieMap.get(state.id)?.runtimeMins)
+
+		setMaxvals({ ...maxvals, wwgross: maxww, budget: maxbudget, runtime: maxruntime })
 		return sorted
 	}
 	function mapMovies(movies: IMovie[]): Map<string, IMovie> {

@@ -39,15 +39,18 @@ export default function RatingMovieItem({movie,state}:Props) {
             </div>
         </div>
         <div className="row">
-            <div className="col-6">
-                <div className="rating">
+                <div className="rating col">
                      {/* <Image title="metacritic score" className="icon" src="/metacritic.svg" alt="metacritic" width={30} height={30} /> */}
                      <span title="metacritic score"  className={`metascore ${(meta<0)&& "gray"} 
                      ${(meta>=0 && meta <=40)&& "red"} 
                      ${(meta>40 && meta <=60)&& "yellow"} 
                      `}>{meta===-1?"-":meta} </span>
                 </div>
-                <div className="rating">
+                <div className="rating col-2">
+                    <Image title="ImDB rating" className="icon" src="/star.png" alt="metacritic" width={25} height={25} />
+                    <b title="ImDB rating" className="imdbscore">{imdb===-1?"N/A":imdb} </b>
+                </div>
+                <div className="rating col">
                     {(movie.rtState===""||!movie.rtState) 
                     && ( <> <Image title="Tomatometer" className="icon grayscale" src="/rt-fresh.png" alt="Tomatometer" width={35} height={35} />
                         <b title="Tomatometer" className="rottentomato"> - </b></>)
@@ -66,13 +69,7 @@ export default function RatingMovieItem({movie,state}:Props) {
                     }
 
                 </div>
-            </div>
-            <div className="col-6">
-                <div className="rating">
-                    <Image title="ImDB rating" className="icon" src="/star.png" alt="metacritic" width={20} height={20} />
-                    <span title="ImDB rating" className="imdbscore">{imdb===-1?"N/A":imdb+" / 10"} </span>
-                </div>
-                <div className="rating">
+                <div className="rating col">
                     {(movie.rtAudienceState===""||!movie.rtAudienceState) 
                         && ( <> <Image title="RT audience" className="icon grayscale" src="/rt-audience-upright.png" alt="Tomatometer" width={25} height={35} />
                             <b title="RT audience" className="rottentomato"> - </b></>)
@@ -86,24 +83,24 @@ export default function RatingMovieItem({movie,state}:Props) {
                             <b title="RT audience" className="rottentomato">{tomato_aud}%</b></>)
                         }
                 </div>
-            </div>
         </div>
       </div>
         ):""}
         <style jsx>{`
             .rottentomato{
                 margin-left:4px;
-                font-size:20px;
+                font-size:18px;
                 color:whitesmoke;
             }
             .imdbscore{
                 margin-left:4px;
                 vertical-align: middle;
                 color:whitesmoke;
+                font-size:17px;
 
             }
             .header{
-                min-height:90px;
+                min-height:70px;
             }
             .metascore{
                 margin-left:4px;
@@ -130,6 +127,10 @@ export default function RatingMovieItem({movie,state}:Props) {
                 display:inline;
             }
             .rating{
+                padding:6px;
+                display:flex;
+                align-items: center;
+                justify-content: center;
                 min-height:50px;
                 text-align:center;
             }
@@ -138,7 +139,7 @@ export default function RatingMovieItem({movie,state}:Props) {
                 margin:3px;
                 padding:5px;
                 display:block;
-                width:250px;
+                width:350px;
                 cursor:pointer;
                 {/* flex-grow:1; */}
             } .item.inactive{

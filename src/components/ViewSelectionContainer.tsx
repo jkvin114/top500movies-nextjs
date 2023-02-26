@@ -8,18 +8,19 @@ export default function ViewSelectionContainer(){
 
     return (<>
     <div className="filter-container bg-body-secondary">
+        
+        <div  className={`viewtype-item view-nav ${(view==="list"||!view? "bg-secondary":" inactive")}`}>
+
+    <Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "list"} }}>
+        <Image src="/list.svg" alt="list" width={30} height={30} />
+    </Link>
+    </div>
         <div className={`viewtype-item view-nav ${(view!=="image"? "inactive":" bg-secondary")}`}>
             
             <Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "image"} }} >
                 <Image src="/image.svg" alt="image" width={30} height={30} />
                 {/* <text className="d-none d-sm-inline">Poster</text> */}
             </Link>
-        </div>
-        <div  className={`viewtype-item view-nav ${(view==="list"||!view? "bg-secondary":" inactive")}`}>
-
-		<Link scroll={false} href={{ pathname: '/', query: {...router.query, view: "list"} }}>
-			<Image src="/list.svg" alt="list" width={30} height={30} />
-		</Link>
         </div>
         <div  className={`viewtype-item view-nav ${(view!=="grid"? "inactive":" bg-secondary")}`}>
 

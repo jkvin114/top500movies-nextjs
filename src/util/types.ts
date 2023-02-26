@@ -36,7 +36,7 @@ type IRank = {
 }
 type graphMaxVals={
     wwgross:number,
-    dmgross:number,
+    budget:number,
     runtime:number
 }
 

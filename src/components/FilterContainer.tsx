@@ -57,6 +57,11 @@ export default function FilterContainer({directors,actors,companies,setFilter,ol
     }
     function onreset(){
         (document.getElementById("filterform") as any)?.reset()
+        router.push({
+            pathname: '/',
+            query: {...router.query, page:1 }
+          },undefined, { shallow: true })
+        setFilter(new Filter())
     }
     function changeYearType(event:ChangeEvent<HTMLInputElement>){
         

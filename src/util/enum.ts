@@ -22,6 +22,18 @@ export enum FilterType {
 	ACTOR,
 	COMPANY,
 }
+export enum GraphType{
+	WW_GROSS="Worldwide Gross",
+	DOM_INTL_GROSS="Domestic & International Gross",
+	BUDGET="Production Budget",
+	RUNNING_TIME="Runnning Time"
+}
+export const GraphTypeStr=[
+	"Worldwide Gross",
+	"Domestic & International Gross",
+	"Production Budget",
+	"Runnning Time"
+]
 export enum SortType {
 	WW_GROSS = "Worldwide Gross",
 	DM_GROSS = "Domestic Gross",

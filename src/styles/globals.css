@@ -109,7 +109,7 @@ a {
 } */
 
 .view-nav.inactive img{
-  filter:brightness(0.3);
+  filter:brightness(0.5);
 }
 .view-nav.inactive text{
   filter:brightness(0.8);

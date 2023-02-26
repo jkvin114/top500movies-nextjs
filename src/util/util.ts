@@ -8,6 +8,10 @@ export const roundToNearest=function(num:number,digit?:number){
 
 	return Math.round(num) / (10**-digit)
 }
+export function isValidCurrency(str:string|number){
+	str=String(str)
+	return !(str.charAt(0)!=="£"&&str.charAt(0)!=="$")
+}
 export function num2USD(num: number): string {
 	if (num <= 0) return "N/A"
 	let str = String(num)
@@ -106,6 +110,9 @@ export class Filter {
 			case SortType.BUDGET:
 				data[1]="Budget: "+movie.budget
 				break
+			case SortType.WW_GROSS:
+				data[1]="Revenue: "+num2USD(movie.worldwideGross)
+				break
 			case SortType.DM_GROSS:
 				data[1]="Domestic Gross: "+num2USD(movie.domesticGross)
 				break
@@ -157,10 +164,7 @@ export class Filter {
 	private pushback(mul:number){
 		return -Infinity
 	}
-	private isValidCurrency(str:string|number){
-		str=String(str)
-		return !(str.charAt(0)!=="£"&&str.charAt(0)!=="$")
-	}
+	
 	private getSorterProp(movie: IMovie) {
 		let prop: string | number = 0
 		let mul=1
@@ -168,7 +172,7 @@ export class Filter {
 			case SortType.BUDGET:
 				prop = movie.budget
 				let b=extractNumber(String(movie.budget))
-				if(b===-1 || !this.isValidCurrency(movie.budget)) return this.pushback(mul)
+				if(b===-1 || !isValidCurrency(movie.budget)) return this.pushback(mul)
 				break
 			case SortType.WW_GROSS:
 				prop = movie.worldwideGross
@@ -228,7 +232,7 @@ export class Filter {
 				mul=-1
 			case SortType.PROFIT:
 				let budget=extractNumber(String(movie.budget))
-				if(budget===-1 || movie.worldwideGross===0 || !this.isValidCurrency(movie.budget)) return this.pushback(mul)
+				if(budget===-1 || movie.worldwideGross===0 || !isValidCurrency(movie.budget)) return this.pushback(mul)
 				else prop = movie.worldwideGross / budget
 				break
 		}

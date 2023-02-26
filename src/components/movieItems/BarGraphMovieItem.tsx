@@ -2,20 +2,30 @@ import { graphMaxVals,  IMovie } from "@/util/types"
 import Link from "next/link"
 import Image from "next/image"
 import { num2USD, summarizeUSD } from "@/util/util"
-import { Data } from "charts-css-react"
 import { CSSProperties, useEffect, useState } from "react"
+import { GraphType } from "@/util/enum"
+import { Data } from "charts-css-react"
 type Props={
-    movie:IMovie|undefined
-    maxvals:graphMaxVals
+    title?:string
+    maxval:number
+    graphValue:number[]
     state:number
-    rank:number
+    scale:number
+    graphType:GraphType
+    color:string
 }
-export default function BarGraphMovieItem({movie,maxvals,state}:Props) {
-    const ratio=(movie?movie.worldwideGross/maxvals.wwgross:0)
+export default function BarGraphMovieItem({title,maxval,graphValue,state,scale,graphType,color}:Props) {
+    const ratio=(graphValue[0]/maxval)*scale
+    const ratio2=((graphValue.length>1? graphValue[1]:0)/maxval)*scale
     const [labelPos,setLabelPos]=useState<string>("inner")
     const [value,setValue]=useState<string>("N/A")
+    let color1=color
+    const color2="#1976D2"
     useEffect(()=>{
-       if((window.innerWidth-50)*ratio <120){
+        if(graphType===GraphType.DOM_INTL_GROSS){
+            setLabelPos("double")
+        }
+       else if((window.innerWidth-50)*ratio <120){
             setLabelPos("outer")
        }
        else if((window.innerWidth-50)*ratio <290){
@@ -26,44 +36,56 @@ export default function BarGraphMovieItem({movie,maxvals,state}:Props) {
 
        if (window.matchMedia("(orientation: portrait)").matches) {
             // you're in PORTRAIT mode
-            setValue(summarizeUSD(movie?movie.worldwideGross:0))
-            setLabelPos("portrait")
+            if(graphType=== GraphType.RUNNING_TIME){
+                setValue(graphValue+"mins")
+            }
+            else{
+                setValue(summarizeUSD(graphValue[0]))
+            }
+            if(graphType!==GraphType.DOM_INTL_GROSS)
+                setLabelPos("portrait")
         }
         
         if (window.matchMedia("(orientation: landscape)").matches) {
             // you're in LANDSCAPE mode
-            setValue(num2USD(movie?movie.worldwideGross:0))
+            if(graphType=== GraphType.RUNNING_TIME){
+                setValue(graphValue+"mins")
+            }
+            else{
+                setValue(num2USD(graphValue[0]))
+            }
+            
         }
 
-    },[window.innerWidth])
+    },[graphValue])
     return (<>
-        {movie?(<>
+        {(<>
             <tr className={`item ${state===1&&"active"} ${state===2&&"inactive"}`}>
             {labelPos==="portrait"&&(<>
-                <Data style={{"--color": "#FF5555","--size":String(ratio)} as CSSProperties }>
+                <Data style={{"--color": color,"--size":String(ratio)} as CSSProperties }>
                 <div className="info">
                     <div className="value"></div>
                 </div>
                 </Data>
                 <div className="info-portrait">
                     <div className="value">{value}</div>
-                    <div className="title">{movie.title}</div>
+                    <div className="title">{title}</div>
                 </div>
                 </>
                 
             )}{labelPos==="inner"&&(
-                <Data style={{"--color": "#FF5555","--size":String(ratio)} as CSSProperties }>
+                <Data style={{"--color":color,"--size":String(ratio)} as CSSProperties }>
                 
                 <div className="info">
                     <div className="value">{value}</div>
-                    <div className="title">{movie.title}</div>
+                    <div className="title">{title}</div>
                 </div>
                 </Data>
             )}{
             labelPos==="partial"&&(
                 <>
 
-                <Data style={{"--color": "#FF5555","--size":String(ratio)} as CSSProperties }>
+                <Data style={{"--color": color,"--size":String(ratio)} as CSSProperties }>
                 <div className="info">
                 <div className="value">{value}</div>
                     
@@ -71,7 +93,7 @@ export default function BarGraphMovieItem({movie,maxvals,state}:Props) {
                 </Data>
                 <Data className="trans" style={{"--color":"rgba(230, 30, 30,0)","--size":String(1-ratio)} as CSSProperties }>
                 <div className="info">
-                <div className="title">{movie.title}</div>
+                <div className="title">{title}</div>
                 </div>
                 
                 </Data>
@@ -79,19 +101,37 @@ export default function BarGraphMovieItem({movie,maxvals,state}:Props) {
             )}
             {labelPos==="outer"&&(
 
-                <><Data style={{"--color": "#FF5555","--size":String(ratio)} as CSSProperties }>
+                <><Data style={{"--color":color,"--size":String(ratio)} as CSSProperties }>
                    
                 </Data>
                 <Data style={{"--color":"rgba(230, 30, 30,0)","--size":String(1-ratio)} as CSSProperties }>
                 <div className="info">
                 <div className="value">{value}</div>
-                <div className="title">{movie.title}</div>
+                <div className="title">{title}</div>
                     
                 </div>
                 
                 </Data></>
                 
             )}
+             {labelPos==="double"&&(
+
+                <><Data style={{"--color":color1,"--size":String(ratio)} as CSSProperties }>
+                    <div className="info">
+                    <div className="value"></div>
+                </div>
+                </Data>
+                <Data style={{"--color":color2,"--size":String(ratio2)} as CSSProperties }>
+                <div className="info">
+                    <div className="value"></div>
+                </div>
+                </Data>
+                <div className="info-portrait">
+                    <div className="value">{value}</div>
+                    <div className="title">{title}</div>
+                </div></>
+
+                )}
                 {/* <span className="bar">
 
                 </span>
@@ -151,10 +191,10 @@ export default function BarGraphMovieItem({movie,maxvals,state}:Props) {
                     font-weight:bold;
                 }
                 .item.inactive{
-                    filter:brightness(0.5);
+                    filter:brightness(0.4);
                 }
 			`}</style></>
-        ):""}</>
+        )}</>
         
     )
 }
