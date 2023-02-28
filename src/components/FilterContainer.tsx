@@ -1,6 +1,7 @@
 import Image from "next/image"
 import FilterSelectionItem from "./FilterSelectionItem"
-import { Filter, FRANCHISE_NAMES } from "@/util/util"
+import { Filter } from "@/util/util"
+
 import { FilterType, FilterViewType, SortType, sortTypeStr } from "@/util/enum"
 import {
 	ChangeEvent,
@@ -13,12 +14,17 @@ import {
 	useState,
 } from "react"
 import { useRouter } from "next/router"
+import { FRANCHISE_NAMES } from "@/util/franchiseData"
 type Props = {
 	directors: string[]
 	actors: string[]
 	companies: string[]
 	setFilter: Dispatch<SetStateAction<Filter>>
 	oldFilter: Filter
+}
+type dim = {
+	width: number
+	height: number
 }
 
 export default function FilterContainer({ directors, actors, companies, setFilter, oldFilter }: Props) {
@@ -27,6 +33,9 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 	const [filterViewOption, setFilterViewOption] = useState<string>("hide")
 	const [isPortrait, setPortrait] = useState<boolean>(false)
 	const [isFilterVisible, setFilterVisibility] = useState<boolean>(false)
+	const size=useWindowSize()
+
+
 	function onSubmit(event: any) {
 		event.preventDefault()
 		// const sorttype=event.target.sort_type.value==="increase"?1:-1
@@ -39,6 +48,9 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 			} else {
 				filter.addFilter(FilterType.IN_YEAR, Number(event.target.year.value))
 			}
+		}
+		if (event.target.search.value !== "") {
+			filter.addFilter(FilterType.SEARCH, event.target.search.value)
 		}
 		if (event.target.usa_only.checked) filter.addFilter(FilterType.COUNTRY, "USA")
 
@@ -65,23 +77,48 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 			{ shallow: true }
 		)
 		setFilter(filter)
-        toggleFilter()
+		toggleFilter()
 		return false
 	}
 	function onreset() {
 		;(document.getElementById("filterform") as any)?.reset()
-		setFilter(new Filter().setSort1(oldFilter.sort1,-1))
+		// setFilter(new Filter().setSort1(oldFilter.sort1, -1))
 		return
-		router.push(
-			{
-				pathname: "/",
-				query: { ...router.query, page: 1 },
-			},
-			undefined,
-			{ shallow: true }
-		)
-        toggleFilter()
 	}
+
+	// custom Hook to catch viewport size change
+	function useWindowSize() {
+		// Initialize state with undefined width/height so server and client renders match
+		// Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+		const [windowSize, setWindowSize] = useState<dim>({
+			width: 1,
+			height: 1,
+		})
+		useEffect(() => {
+			// Handler to call on window resize
+			function handleResize() {
+				if (window.matchMedia("(orientation: portrait)").matches) {
+					setPortrait(true)
+				} else {
+					setPortrait(false)
+				}
+
+				// Set window width/height to state
+				setWindowSize({
+					width: window.innerWidth,
+					height: window.innerHeight,
+				})
+			}
+			// Add event listener
+			window.addEventListener("resize", handleResize)
+			// Call handler right away so state gets updated with initial window size
+			handleResize()
+			// Remove event listener on cleanup
+			return () => window.removeEventListener("resize", handleResize)
+		}, [])
+		return windowSize
+	}
+
 	function changeYearType(event: ChangeEvent<HTMLInputElement>) {
 		setYearOption(event.target.value)
 	}
@@ -89,37 +126,36 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 		setFilterViewOption(event.target.value)
 	}
 	function toggleFilter() {
-        if(isFilterVisible){
-            document.body.style.overflow = "auto"
-        }
-        else if(isPortrait){
-            document.body.style.overflow = "hidden"
-        }
+		if (isFilterVisible) {
+			document.body.style.overflow = "auto"
+		} else if (isPortrait) {
+			document.body.style.overflow = "hidden"
+		}
 		setFilterVisibility(!isFilterVisible)
 	}
-    useEffect(()=>{
-        if (window.matchMedia("(orientation: portrait)").matches) {
-            setPortrait(true)
-        }
-        else{
-            setPortrait(false)
-        }
-    },[])
+	useEffect(() => {
+		if (window.matchMedia("(orientation: portrait)").matches) {
+			setPortrait(true)
+		} else {
+			setPortrait(false)
+		}
+	}, [])
 	return (
 		<div className="container">
 			{isPortrait && (
-                <button onClick={toggleFilter} className="filter-toggle-btn btn btn-secondary bg-body-secondary" type="button">
-                <Image src="/filter.svg" width={30} height={30} alt="" />
-                Filters
-           </button>
-
-				
+				<button onClick={toggleFilter} className="filter-toggle-btn btn btn-secondary bg-body-secondary" type="button">
+					<Image src="/filter.svg" width={30} height={30} alt="" />
+					Filters
+				</button>
 			)}
 
 			<div className={`filter-container bg-body-secondary ${isPortrait && "portrait"} ${!isFilterVisible && "hidden"}`}>
 				{isPortrait ? (
 					<h5 onClick={toggleFilter}>
-						Filters<strong className="close-filter" onClick={toggleFilter}>&times;</strong>
+						Filters
+						<strong className="close-filter" onClick={toggleFilter}>
+							&times;
+						</strong>
 					</h5>
 				) : (
 					<h5 className="filter-toggler" data-bs-toggle="collapse" data-bs-target="#filter-content">
@@ -172,7 +208,10 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 								</label>
 							</div>
 						</div>
-
+						<div className="form-floating filter-item">
+							<input type="text" name="search" className="form-control" id="input-search" placeholder="search" />
+							<label htmlFor="input-search">Search by title</label>
+						</div>
 						<div className="form-check form-switch filter-item">
 							<input className="form-check-input" name="usa_only" type="checkbox" id="input-usa-only" value="usonly" />
 							<label className="form-check-label" htmlFor="input-usa-only">
@@ -220,7 +259,7 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 
 						<div className="filter-item btn-container">
 							<button type="button" className="btn btn-secondary" onClick={onreset}>
-								Reset
+								Clear
 							</button>
 							<button type="submit" className="btn btn-primary">
 								Apply
@@ -231,17 +270,16 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 			</div>
 			<style jsx>
 				{`
-                .filter-toggle-btn{
-
-                }
-                .filter-toggler{
-                    display:block;
-                    text-align:center;
-                }
-                .close-filter{
-					float:right;
-                    font-size:25px;
-                }
+					.filter-toggle-btn {
+					}
+					.filter-toggler {
+						display: block;
+						text-align: center;
+					}
+					.close-filter {
+						float: right;
+						font-size: 25px;
+					}
 					.filter-container.portrait {
 						position: fixed;
 						top: 0;

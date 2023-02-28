@@ -6,33 +6,41 @@ import { Chart, ChartTypes } from "charts-css-react"
 import { useEffect, useState } from "react"
 import { GraphType } from "@/util/enum"
 import { title } from "process"
-import { extractNumber, isValidCurrency } from "@/util/util"
+import { extractNumber, getMaxVal, isValidCurrency } from "@/util/util"
 
 type Props = {
 	list: movieState[]
 	movies: Map<string, IMovie>
-	maxvals: graphMaxVals
 }
 type MovieValue = {
 	title: string
 	values: number[]
 }
 
-export default function BarGraphConatiner({ list, movies, maxvals }: Props) {
+export default function BarGraphConatiner({ list, movies }: Props) {
 	const [type, setType] = useState<GraphType>(GraphType.WW_GROSS)
 	const [maxval, setMaxval] = useState<number>(Infinity)
 	const [movieValues, setMovieValues] = useState<MovieValue[]>([])
 	const [color, setColor] = useState<string>("#FF5555")
 	const [scale, setScale] = useState<number>(1)
+	
 	useEffect(() => {
 		if (type === GraphType.WW_GROSS || type === GraphType.DOM_INTL_GROSS) {
-			setMaxval(maxvals.wwgross)
+			setMaxval(getMaxVal(list, (state: movieState) => movies.get(state.id)?.worldwideGross))
 		}
 		if (type === GraphType.BUDGET) {
-			setMaxval(maxvals.budget)
+			setMaxval(getMaxVal(list, (state: movieState) => {
+				const movie=movies.get(state.id)
+				if(!movie || extractNumber(movie.budget)===-1) return -1
+
+				if(isValidCurrency(movie.budget)){
+					return extractNumber(movie.budget)
+				}
+				return -1
+		}))
 		}
 		if (type === GraphType.RUNNING_TIME) {
-			setMaxval(maxvals.runtime)
+			setMaxval(getMaxVal(list, (state: movieState) => movies.get(state.id)?.runtimeMins))
 		}
 		setMovieValues(
 			list.map((mv) => {

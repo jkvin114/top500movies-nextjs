@@ -1,4 +1,5 @@
 import { FilterType, FilterViewType, SortType, STATE } from "./enum"
+import { getFranchises } from "./franchiseData"
 import { IMovie, MovieFilter,  movieState, MovieSorter } from "./types"
 
 export const list2str=function(list:string[]){
@@ -284,6 +285,11 @@ export class Filter {
 				let list = getFranchises(movie.id)
 				// if(list.length===0) return ["Other",false]
 				return list.includes(String(this.filterVals[i]))
+			case FilterType.SEARCH:
+				const regex = new RegExp(`${this.filterVals[i]}`,"gi");
+
+				let matches=movie.title.match(regex)?.length
+				return matches!==undefined && matches>0
 			case FilterType.NONE:
 				return true
 		}
@@ -365,159 +371,3 @@ export class Filter {
 		return classify
 	}
 }
-const F = {
-	Avengers: ["tt4154796", "tt4154756", "tt0848228", "tt2395427"],
-	MCU: [
-		"tt0371746",
-		"tt5095030",
-		"tt1228705",
-		"tt1981115",
-		"tt1211837",
-		"tt1843866",
-		"tt0948470",
-		"tt10648342",
-		"tt2015381",
-		"tt0145487",
-		"tt9114286",
-		"tt3501632",
-		"tt3896198",
-		"tt2250912",
-		"tt9419884",
-		"tt4154796",
-		"tt4154756",
-		"tt10872600",
-		"tt0848228",
-		"tt2395427",
-		"tt1825683",
-		"tt1300854",
-		"tt3498820",
-		"tt6320628",
-		"tt4154664",
-	],
-	"MCU phase 1": ["tt0371746", "tt1228705", "tt0848228"],
-	"MCU phase 2": ["tt1981115", "tt1843866", "tt2395427", "tt1300854"],
-	"MCU phase 3": [
-		"tt5095030",
-		"tt1211837",
-		"tt2015381",
-		"tt3501632",
-		"tt3896198",
-		"tt2250912",
-		"tt4154796",
-		"tt4154756",
-		"tt1825683",
-		"tt3498820",
-		"tt6320628",
-		"tt4154664",
-	],
-	"MCU phase 4": ["tt10648342", "tt9114286", "tt9419884", "tt10872600"],
-	"Marvel Comics": [
-		"tt0371746",
-		"tt1981115",
-		"tt5095030",
-		"tt1228705",
-		"tt1211837",
-		"tt1872181",
-		"tt1843866",
-		"tt0948470",
-		"tt10648342",
-		"tt2015381",
-		"tt0316654",
-		"tt0145487",
-		"tt9114286",
-		"tt3501632",
-		"tt1270797",
-		"tt3896198",
-		"tt2250912",
-		"tt0413300",
-		"tt9419884",
-		"tt10872600",
-		"tt4154796",
-		"tt4154756",
-		"tt0848228",
-		"tt2395427",
-		"tt1825683",
-		"tt1300854",
-		"tt3498820",
-		"tt4154664",
-	],
-	"Marvel Comics(Fox)": ["tt5463162", "tt1431045", "tt1877832"],
-	"Star Wars": ["tt0121765", "tt0076759", "tt0121766", "tt0120915", "tt2488496", "tt2527336", "tt2527338", "tt3748528"],
-	"Star Wars (Disney)": ["tt2488496", "tt2527336", "tt2527338", "tt3748528"],
-	"Star Wars (Original)": ["tt0076759"],
-	"Star Wars (Prequel)": ["tt0121765", "tt0120915", "tt0121766"],
-	Avatar: ["tt0499549", "tt1630029"],
-	"Spider-man": ["tt1872181", "tt0316654", "tt0145487", "tt2250912", "tt0413300", "tt10872600", "tt6320628"],
-	Jurassic: ["tt0369610", "tt4881806", "tt0107290", "tt8041270"],
-	"Disney Live-Action": ["tt1587310", "tt3040964", "tt1014759", "tt6105098", "tt2771200", "tt6139732"],
-	"Disney Animated": [
-		"tt0398286",
-		"tt0317705",
-		"tt2245084",
-		"tt3521164",
-		"tt1049413",
-		"tt2380307",
-		"tt2096673",
-		"tt0266543",
-		"tt0110357",
-		"tt2948356",
-		"tt2277860",
-		"tt4520988",
-		"tt2294629",
-		"tt3606756",
-		"tt1979376",
-		"tt0435761",
-	],
-	"Harry Potter": [
-		"tt0304141",
-		"tt0330373",
-		"tt0295297",
-		"tt0417741",
-		"tt1201607",
-		"tt0241527",
-		"tt0926084",
-		"tt0373889",
-	],
-	"Wizarding World": [
-		"tt4123430",
-		"tt0304141",
-		"tt3183660",
-		"tt0330373",
-		"tt0295297",
-		"tt0417741",
-		"tt1201607",
-		"tt0241527",
-		"tt0926084",
-		"tt0373889",
-	],
-	"Fast & Furious": ["tt5433138", "tt6806448", "tt1905041", "tt2820852", "tt4630562"],
-	"DC Comics": [
-		"tt0974015",
-		"tt0770828",
-		"tt1386697",
-		"tt1877830",
-		"tt0451279",
-		"tt2975590",
-		"tt1477834",
-		"tt1345836",
-		"tt7286456",
-		"tt0468569",
-	],
-	DCEU: ["tt0974015", "tt0770828", "tt1386697", "tt0451279", "tt2975590", "tt1477834"],
-	"Lord of the Rings": ["tt0167260", "tt0167261", "tt0120737"],
-	Hobbit: ["tt0903624", "tt2310332", "tt1170358"],
-	"Middle Earth": ["tt0120737", "tt0167260", "tt0903624", "tt2310332", "tt1170358", "tt0167261"],
-	Transformers: ["tt3371366", "tt0418279", "tt1399103", "tt2109248", "tt1055369"],
-	"Pirates of the Carribean": ["tt0325980", "tt1790809", "tt0383574", "tt1298650", "tt0449088"],
-	"007": ["tt1074638", "tt2379713", "tt2382320"],
-	"Toy Story": ["tt1979376", "tt0435761"],
-	"Hunger Games": ["tt1951266", "tt1392170", "tt1951265", "tt1951264"],
-}
-export function getFranchises(movieid: string) {
-	let list = []
-	for (const [k, v] of Object.entries(F)) {
-		if (v.includes(movieid)) list.push(k)
-	}
-	return list
-}
-export const FRANCHISE_NAMES = Object.keys(F).sort((a, b) => a.localeCompare(b))

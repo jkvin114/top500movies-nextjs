@@ -20,8 +20,14 @@ export default function GridMovieItem({movie,state}:Props) {
     }    
     const router=useRouter()
 
+    function copy(id:string)
+    {
+        navigator.clipboard.writeText("\""+id+"\",");
+
+    }
     return (<>
-        {movie?(
+        {movie?(<>
+        {/* <b onClick={()=>copy(movie.id)}>{movie.id}</b> */}
             <Link as={`/detail/`+movie?.id}
             href={{
             pathname: `/`,
@@ -51,7 +57,9 @@ export default function GridMovieItem({movie,state}:Props) {
                 <div className="card-text"><small className="text-muted">{(state.extraData!=null&& needExtra())&&state.extraData} </small></div>
             </div>
         </div>
+        
       </div></Link>
+      </>
         // <div className={`item ${active?"active":"inactive"}`}><Link href={`/detail/`+movie.id}>
         //     <div>
         //         <div className="title">{movie.title}</div>

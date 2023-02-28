@@ -179,3 +179,7 @@ a{ color: inherit !important;
 .list-group-item-action:focus, .list-group-item-action:hover {
   z-index: inherit !important;
 }
+footer{
+  padding: 20px;
+  height: fit-content;
+}

@@ -50,7 +50,7 @@ export default function Ratings({ movie }: { movie: IMovie | undefined }) {
 							</b>
 						</>
 					)}
-					{movie?.rtState === "rotten" && (
+					{(movie?.rtState === "rotten"||movie?.rtState === "r") && (
 						<>
 							{" "}
 							<Image
@@ -66,7 +66,7 @@ export default function Ratings({ movie }: { movie: IMovie | undefined }) {
 							</b>
 						</>
 					)}
-					{movie?.rtState === "fresh" && (
+					{(movie?.rtState === "fresh"||movie?.rtState === "f") && (
 						<>
 							{" "}
 							<Image
@@ -82,7 +82,7 @@ export default function Ratings({ movie }: { movie: IMovie | undefined }) {
 							</b>
 						</>
 					)}
-					{movie?.rtState === "certified-fresh" && (
+					{(movie?.rtState === "certified-fresh"||movie?.rtState === "c") && (
 						<>
 							{" "}
 							<Image
@@ -117,7 +117,7 @@ export default function Ratings({ movie }: { movie: IMovie | undefined }) {
 							</b>
 						</>
 					)}
-					{movie?.rtAudienceState === "spilled" && (
+					{(movie?.rtAudienceState === "spilled"||movie?.rtAudienceState === "s") && (
 						<>
 							{" "}
 							<Image
@@ -133,7 +133,7 @@ export default function Ratings({ movie }: { movie: IMovie | undefined }) {
 							</b>
 						</>
 					)}
-					{movie?.rtAudienceState === "upright" && (
+					{(movie?.rtAudienceState === "upright"||movie?.rtAudienceState === "u") && (
 						<>
 							{" "}
 							<Image

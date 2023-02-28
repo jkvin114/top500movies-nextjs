@@ -19,27 +19,10 @@ type Props = {
 export default function MovieContainer({ viewType, movies,filter }: Props) {
 	const [currPage, updatePage] = useState<number>(1)
 	const [currPageSize, updatePageSize] = useState<number>(10)
-	const [maxvals, setMaxvals] = useState<graphMaxVals>({
-		wwgross: 0,
-		budget: 0,
-		runtime: 0,
-	})
 	function sortMovies(movies: IMovie[],filter:Filter): movieState[] {
 		let sorted = filter
 			.run(movies)
-		let maxww = getMaxVal(sorted, (state: movieState) => movieMap.get(state.id)?.worldwideGross)
-		let maxbudget = getMaxVal(sorted, (state: movieState) => {
-					const movie=movieMap.get(state.id)
-					if(!movie || extractNumber(movie.budget)===-1) return -1
-
-                    if(isValidCurrency(movie.budget)){
-                        return extractNumber(movie.budget)
-                    }
-					return -1
-		})
-		let maxruntime = getMaxVal(sorted, (state: movieState) => movieMap.get(state.id)?.runtimeMins)
-
-		setMaxvals({ ...maxvals, wwgross: maxww, budget: maxbudget, runtime: maxruntime })
+		
 		return sorted
 	}
 	function mapMovies(movies: IMovie[]): Map<string, IMovie> {
@@ -67,7 +50,7 @@ export default function MovieContainer({ viewType, movies,filter }: Props) {
 				{viewType === ViewType.IMAGE && <ImageMovieConatiner list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.LIST && <ListMovieContainer list={slicedList} movies={movieMap} />}
 				{viewType === ViewType.GRID && <GridMovieConatiner list={slicedList} movies={movieMap} />}
-				{viewType === ViewType.BAR_GRAPH && <BarGraphConatiner list={slicedList} movies={movieMap} maxvals={maxvals} />}
+				{viewType === ViewType.BAR_GRAPH && <BarGraphConatiner list={slicedList} movies={movieMap}  />}
 				{viewType === ViewType.RATING && <RatingConatiner list={slicedList} movies={movieMap}/>}
 
 				<PageNav currPage={currPage} currPageSize={currPageSize} totalLength={sortedList.length}/>

@@ -59,7 +59,9 @@ export default function BarGraphMovieItem({title,maxval,graphValue,state,scale,g
 
     },[graphValue])
     return (<>
+    
         {(<>
+        
             <tr className={`item ${state===1&&"active"} ${state===2&&"inactive"}`}>
             {labelPos==="portrait"&&(<>
                 <Data style={{"--color": color,"--size":String(ratio)} as CSSProperties }>

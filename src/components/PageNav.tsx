@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, FormEvent, useState } from "react";
+import { ChangeEventHandler, FormEvent, useEffect, useState } from "react";
 
 type Prop={
     currPage:number,currPageSize:number,totalLength:number
@@ -81,10 +81,10 @@ export default function PageNav({currPage,currPageSize,totalLength}:Prop){
         </nav>
         <div className="input-group selection">
             <label className="input-group-text" htmlFor={"inputGroup # items"}># items</label>
-            <select defaultValue={String(pagesize)} className="form-select" id={"inputGroup # items"} onChange={pageChange}>
+            <select defaultValue={String(router.query.pagesize)} className="form-select" id={"inputGroup # items"} onChange={pageChange}>
                 {
                     ["5","10","20","50"].map((item)=>(
-                        <option  value={item} key={item} >{item}</option>
+                        <option value={item} key={item} >{item}</option>
                     ))
                 }
             </select>

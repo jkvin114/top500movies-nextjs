@@ -5,7 +5,7 @@ export default function Document() {
 	return (
 		<Html lang="en" data-bs-theme="dark">
 			<Head>
-				<title>Movie</title>
+				<title>Top500Movies</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/rt-audience-upright.png" />
 			</Head>
@@ -21,7 +21,7 @@ export default function Document() {
 				<p>jkvin114@gmail.com</p>
 				<p>
 					Movie data from <Link href={"https://www.themoviedb.org/"}>TheMovieDB</Link> and
-					<Link href={"https://imdb-api.com/"}>IMDb API</Link>
+					<Link href={"https://imdb-api.com/"}> IMDb API</Link>
 				</p>
         <p>Rottentomatoes ratings are beta feature and could be inaccurate or missing.</p></div>
 			</footer>

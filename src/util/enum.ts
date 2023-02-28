@@ -21,6 +21,7 @@ export enum FilterType {
 	MONTH,
 	ACTOR,
 	COMPANY,
+	SEARCH
 }
 export enum GraphType{
 	WW_GROSS="Worldwide Gross",
