@@ -286,7 +286,9 @@ export default function FilterContainer({ directors, actors, companies, setFilte
 						left: 0;
 						width: fit-content;
 						height: fit-content;
-						z-index: 99;
+						z-index: 99;    
+						max-height: 90vh;
+    					overflow: auto;
 					}
 					.filter-container.portrait.hidden {
 						visibility: collapse;
