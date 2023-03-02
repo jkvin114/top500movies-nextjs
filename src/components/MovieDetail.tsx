@@ -11,21 +11,26 @@ type Props = {
 export default function MovieDetail({ id, onClose }: Props) {
 	const [tmdbMovieData, setTmdbData] = useState<any>(null)
 	const [movieData, setMovieData] = useState<IMovie | null>(null)
-
+	const [failed, setFailed] = useState<boolean>(false)
 	const getData = useCallback(async () => {
 		const res = await fetch("/api/movie/" + id + "?from=list")
 		const data = await res.json()
-		if (!data.success) return
+		if (data.success){
+			
+			const res2 = await fetch(
+				"https://api.themoviedb.org/3/movie/" + data.data + "?api_key=" + "ea5bddf42dd6e62f45c9c388d34273d8"
+			)
+			const data2 = await res2.json()
+			setTmdbData(data2)
+		}
 
-		const res2 = await fetch(
-			"https://api.themoviedb.org/3/movie/" + data.data + "?api_key=" + "ea5bddf42dd6e62f45c9c388d34273d8"
-		)
-		const data2 = await res2.json()
-		setTmdbData(data2)
 
 		const res3 = await fetch("/api/movie/" + id + "?from=movies")
 		const data3 = await res3.json()
-		if (!data3.success) return
+		if (!data3.success) {
+			setFailed(true)
+			return
+		}
 		setMovieData(data3.data)
 	}, [])
 
@@ -34,7 +39,7 @@ export default function MovieDetail({ id, onClose }: Props) {
 	}, [])
 	return (
 		<>
-			{movieData && tmdbMovieData ? (
+			{movieData ? (
 				<div className="bg-body-secondary detail-container">
 					{onClose && (
 						<button id="close" className="btn btn-secondary" onClick={onClose}>
@@ -50,7 +55,7 @@ export default function MovieDetail({ id, onClose }: Props) {
                             <div className="row  row-cols-1 row-cols-md-2">
                             <div className=" poster d-sm-none d-md-block d-none ">
 
-                                <Image
+                                <img
                                     src={movieData.image}
                                     alt="poster"
                                     className="rounded  "
@@ -59,7 +64,7 @@ export default function MovieDetail({ id, onClose }: Props) {
                                 />
                                 </div >
                                 <div className=" poster-small d-sm-block d-md-none">
-                                <Image
+                                <img
                                     src={movieData.image}
                                     alt="poster"
                                     className="rounded "
@@ -68,7 +73,7 @@ export default function MovieDetail({ id, onClose }: Props) {
                                 />
                             </div>
 							<div >
-								<p>{tmdbMovieData.overview}</p>
+								<p>{tmdbMovieData&&tmdbMovieData.overview}</p>
                                 <div className="container">
 								<Ratings movie={movieData} />
 							</div>
@@ -118,12 +123,12 @@ export default function MovieDetail({ id, onClose }: Props) {
 						</div>
 					</div>
 				</div>
-			) : (
+			) : (failed?<h3>Movie data does not exist!</h3>:(
 				<div className="d-flex justify-content-center align-items-center">
 					{" "}
 					<Image src={"/loading.gif"} width={200} height={200} alt="loading"></Image>
 				</div>
-			)}
+			))}
 
 			<style jsx>
 				{`
