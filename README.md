@@ -1,3 +1,7 @@
+[Deployment](http://ec2-34-202-98-227.compute-1.amazonaws.com:3000)
+- A statistical website of the top 500 movies of all time based on the revenue, which displays various statistics about those movies. 
+
+## IMPORTANT: Database update is currently paused due to the policy change of [IMDb API](https://imdb-api.com/).
 
 
 ## Tech Stacks
