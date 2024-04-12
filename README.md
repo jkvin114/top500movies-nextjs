@@ -1,5 +1,6 @@
-## Deployment
-[http://ec2-34-202-98-227.compute-1.amazonaws.com?top500movies=true](http://ec2-34-202-98-227.compute-1.amazonaws.com?top500movies=true)
+[Deployment](http://ec2-34-202-98-227.compute-1.amazonaws.com:3000)
+- A website featuring statistical data on the top 500 highest-grossing movies of all time, providing a range of statistical information about these films.
+
 
 ## Tech Stacks
 - Next.js
@@ -12,6 +13,8 @@
 - [TheMovieDB](https://www.themoviedb.org/)
 - [IMDb API](https://imdb-api.com/)
 
+
+### IMPORTANT: Database update is currently paused as of June 2023 due to the policy change of [IMDb API](https://imdb-api.com/).
 
 
 
