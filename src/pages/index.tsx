@@ -9,14 +9,16 @@ import MovieDetail from "@/components/MovieDetail"
 export default function Home() {
 	const [list, setList] = useState<IMovie[]>([])
 	const [isModalOpen, setModalOpen] = useState<boolean>(false)
-
-	const getData = useCallback(() => {
+	const [date,setDate] = useState<string>("")
+	const getData = useCallback(async() => {
 		if (list.length > 0) return
 		fetch("/api/movie").then(async (res) => {
 			const data = await res.json()
 
 			setList(data.data)
 		})
+		const info = await(await fetch("/api/info")).json()
+		setDate(info.data.updateDate)
 		///api/movierank?limit=200
 		//https://imdb-api.com/en/API/BoxOfficeAllTime/k_104ms4wr
 		// fetch("/api/movierank?limit=200").then(async (res) => {
@@ -80,7 +82,7 @@ export default function Home() {
 					<MovieDetail id={movieId} onClose={onCloseModal}></MovieDetail>
 				</ReactModal>
 			)}
-			<footer></footer>
+			<p>Last update: {date}</p>
 			<style jsx>
 				{`
 					.modal {

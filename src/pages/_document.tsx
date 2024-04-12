@@ -1,7 +1,20 @@
 import { Html, Head, Main, NextScript } from "next/document"
 import Link from "next/link"
+import { useCallback, useEffect, useState } from "react"
 
 export default function Document() {
+
+	const [date,setDate] = useState<string>("")
+	const getData = useCallback(async () => {
+		const info = await(await fetch("/api/info")).json()
+		console.log(info)
+		setDate(info.data.updateDate)
+	},[])
+	useEffect(()=>{
+		console.log("doc")
+		getData()
+	},[])
+
 	return (
 		<Html lang="en" data-bs-theme="dark">
 			<Head>
@@ -15,10 +28,7 @@ export default function Document() {
 			</body>
 			<footer className=" bg-body-secondary disclaimer">
         <div className="container">
-
-        
-				<p>Made by Yejoon Jung</p>
-				<p>jkvin114@gmail.com</p>
+				{/* <p>jkvin114@gmail.com</p> */}
 				<p>
 					Movie data from <Link href={"https://www.themoviedb.org/"}>TheMovieDB</Link> and
 					<Link href={"https://imdb-api.com/"}> IMDb API</Link>

@@ -33,7 +33,7 @@ export default function GridMovieItem({movie,state}:Props) {
             pathname: `/`,
             query: { ...router.query ,movieId:movie?.id},
         }} shallow={true} scroll={false}>
-        <div className={`item ${state.state===0&&"bg-none border-0"} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
+        <div className={`item ${state.state===0&&"bg-none border-0 "} ${state.state===1&&"active bg-body-secondary "} ${state.state===2&&"inactive "} card mb-3`}>
             <span className="badge bg-warning rounded-pill">{state.rank}</span>
         <div className={`row g-0`}>
           <div className="col-4">
@@ -90,6 +90,7 @@ export default function GridMovieItem({movie,state}:Props) {
                 display:block;
                 width:260px;
                 cursor:pointer;
+                filter:brightness(0.9);
             } .item.inactive{
                 filter:brightness(0.7);
             }

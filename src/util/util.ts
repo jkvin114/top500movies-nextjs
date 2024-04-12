@@ -274,6 +274,7 @@ export class Filter {
 			case FilterType.UNTIL_YEAR:
 				return Number(movie.year) <= Number(this.filterVals[i])
 			case FilterType.MONTH:
+				if(!movie.releaseDate) return false
 				let month = Number(movie.releaseDate.slice(5, 7))
 				return month === this.filterVals[i]
 			case FilterType.ACTOR:

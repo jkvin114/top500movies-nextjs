@@ -55,6 +55,9 @@ export default function ListMovieItem({movie,state}:Props) {
                 margin-right:5px;
                 color:black;
             }
+            .list-group-item.active{
+                z-index:0;
+            }
 			`}</style>
     </>)
 }

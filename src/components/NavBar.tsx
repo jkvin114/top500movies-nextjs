@@ -32,11 +32,11 @@ export default function NavBar() {
                         Dev
                     </Link>
                     </li> */}
-                    <li className="nav-item btn-nav">
+                    {/* <li className="nav-item btn-nav">
                         <Link href={"https://github.com/jkvin114/top200movies-nextjs"}>
                         <Image src="/github.png" alt="Github" width={35} height={35}/>Github
                         </Link>
-                    </li>
+                    </li> */}
                 </ul>
             </div>
         </div>
